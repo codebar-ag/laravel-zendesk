@@ -37,6 +37,7 @@
         <junit outputFile="build/report.junit.xml"/>
     </logging>
     <php>
+        <env name="ZENDESK_ENDPOINT" value="endpoint"/>
         <env name="ZENDESK_EMAIL_ADDRESS" value="email_Address"/>
         <env name="ZENDESK_API_TOKEN" value="token"/>
     </php>
