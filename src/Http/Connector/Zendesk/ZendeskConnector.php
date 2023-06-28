@@ -27,6 +27,10 @@ class ZendeskConnector extends Connector
             throw new \Exception('No authentication method provided.', 500);
         }
 
+        if (! config('zendesk.auth.email_address')) {
+            throw new \Exception('No email address provided.', 500);
+        }
+
         if (config('zendesk.auth.method') === 'basic' && ! config('zendesk.auth.password')) {
             throw new \Exception('No password provided for basic authentication.', 500);
         }
