@@ -4,5 +4,4 @@ namespace CodebarAg\Zendesk;
 
 class Zendesk
 {
-
 }
