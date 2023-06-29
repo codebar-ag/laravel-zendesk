@@ -22,14 +22,20 @@ class CreateSingleTicketRequest extends Request implements HasBody
     }
 
     public function __construct(
-        readonly protected SingleTicketDTO $createTicketDTO
+        readonly protected array|SingleTicketDTO $createTicket
     ) {
     }
 
     protected function defaultBody(): array
     {
+        $body = $this->createTicket;
+
+        if (! $body instanceof SingleTicketDTO) {
+            $body = SingleTicketDTO::fromArray($body);
+        }
+
         return [
-            'ticket' => $this->createTicketDTO->toArray(),
+            'ticket' => $body->toArray(),
         ];
     }
 
