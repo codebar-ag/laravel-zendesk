@@ -1,30 +1,3 @@
-# Temp Testing
-
-```php
-Route::get('/', function () {
-    $connector = new ZendeskConnector();
-
-    $response = $connector->send(new AllTicketsRequest());
-    dump($response->dto());
-    $response = $connector->send(new SingleTicketRequest(1));
-    dump($response->dto());
-    $response = $connector->send(new CountTicketsRequest());
-    dump($response->dto());
-    $response = $connector->send(
-        new CreateSingleTicketRequest(
-            CreateTicketDTO::fromArray([
-                "comment" => CommentDTO::fromArray([
-                    "body" => "The smoke is very colorful."
-                ]),
-                "priority" => "urgent",
-                "subject" => "My printer is on fire!"
-            ])
-        )
-    );
-    dump($response->json());
-});
-```
-
 <img src="https://banners.beyondco.de/Laravel%20Zendesk.png?theme=light&packageManager=composer+require&packageName=codebar-ag%2Flaravel-zendesk&pattern=circuitBoard&style=style_2&description=A+Laravel+Zendesk+integration.&md=1&showWatermark=1&fontSize=150px&images=home&widths=500&heights=500">
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/codebar-ag/laravel-zendesk.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-zendesk)
@@ -118,7 +91,7 @@ The following responses are currently supported for retrieving the response body
 See https://docs.saloon.dev/the-basics/responses for more information.
 
 ### Examples
-
+--
 #### Upload an attachment
 
 ```php
