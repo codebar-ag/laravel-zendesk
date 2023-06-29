@@ -27,15 +27,16 @@ class AttachmentDTO extends Data
     ) {
     }
 
-    public static function fromResponse(Response $response): self
-    {
-        $data = $response->json();
-
-        return self::fromArray($data);
-    }
-
     public static function fromArray(array $data): self
     {
+        $thumbnails = $data['thumbnails'] ?? null;
+
+        if ($thumbnails) {
+            foreach ($thumbnails as $key => $thumbnail) {
+                $thumbnails[$key] = self::getThumbnail($thumbnail);
+            }
+        }
+
         return new static(
             content_type: $data['content_type'] ?? null,
             content_url: $data['content_url'] ?? null,
@@ -48,9 +49,20 @@ class AttachmentDTO extends Data
             malware_scan_result: MalwareScanResult::tryFrom($data['malware_scan_result'] ?? null),
             mapped_content_url: $data['mapped_content_url'] ?? null,
             size: $data['size'] ?? null,
-            thumbnails: $data['thumbnails'] ?? null,
+            thumbnails: $thumbnails ?? null,
             url: $data['url'] ?? null,
             width: $data['width'] ?? null,
         );
+    }
+
+    private static function getThumbnail(null|array|ThumbnailDTO $data): ThumbnailDTO
+    {
+        $attachment = $data ?? null;
+
+        if (! $attachment instanceof ThumbnailDTO) {
+            $attachment = ThumbnailDTO::fromArray($attachment);
+        }
+
+        return $attachment;
     }
 }

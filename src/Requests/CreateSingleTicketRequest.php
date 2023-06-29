@@ -22,7 +22,7 @@ class CreateSingleTicketRequest extends Request implements HasBody
     }
 
     public function __construct(
-        readonly protected CreateTicketDTO $createTicketDTO
+        readonly protected SingleTicketDTO $createTicketDTO
     ) {
     }
 
@@ -35,8 +35,6 @@ class CreateSingleTicketRequest extends Request implements HasBody
 
     public function createDtoFromResponse(Response $response): mixed
     {
-        $response = $response->json();
-
         return SingleTicketDTO::fromResponse($response);
     }
 }

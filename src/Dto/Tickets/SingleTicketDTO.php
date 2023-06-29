@@ -8,6 +8,7 @@ use CodebarAg\Zendesk\Enums\TicketType;
 use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
+use function Pest\Laravel\instance;
 
 class SingleTicketDTO extends Data
 {
@@ -46,7 +47,7 @@ class SingleTicketDTO extends Data
         public ?string $raw_subject,
         public ?string $recipient,
         public ?array $requester,
-        public int $requester_id,
+        public ?int $requester_id,
         public ?bool $self_update,
         public ?array $satisfaction_rating,
         public ?array $sharing_agreement_ids,
@@ -75,6 +76,24 @@ class SingleTicketDTO extends Data
 
     public static function fromArray(array $data): self
     {
+        $comment = array_key_exists('comment', $data) ? $data['comment'] : null;
+
+        if ($comment && ! $comment instanceof CommentDTO) {
+            $comment = CommentDTO::fromArray($comment);
+        }
+
+        $priority =  array_key_exists('priority', $data) ? $data['priority'] : null;
+
+        if ($priority && ! $priority instanceof TicketPriority) {
+            $priority = TicketPriority::tryFrom($priority);
+        }
+
+        $type =  array_key_exists('type', $data) ? $data['type'] : null;
+
+        if ($type && ! $type instanceof TicketType) {
+            $type = TicketType::tryFrom($type);
+        }
+
         return new static(
             allow_attachments: $data['allow_attachments'] ?? null,
             allow_channelback: $data['allow_channelback'] ?? null,
@@ -84,11 +103,11 @@ class SingleTicketDTO extends Data
             brand_id: $data['brand_id'] ?? null,
             collaborator_ids: $data['collaborator_ids'] ?? null,
             collaborators: $data['collaborators'] ?? null,
-            comment: array_key_exists('comment', $data) ? CommentDTO::fromArray($data['comment']) : null,
-            created_at: Carbon::parse($data['created_at']),
+            comment: $comment,
+            created_at: Carbon::parse($data['created_at'] ?? null),
             custom_fields: $data['custom_fields'] ?? null,
             description: $data['description'] ?? null,
-            due_at: Carbon::parse($data['due_at']),
+            due_at: Carbon::parse($data['due_at'] ?? null),
             email_cc_ids: $data['email_cc_ids'] ?? null,
             email_ccs: $data['email_ccs'] ?? null,
             external_id: $data['external_id'] ?? null,
@@ -105,12 +124,12 @@ class SingleTicketDTO extends Data
             macro_ids: $data['macro_ids'] ?? null,
             metadata: $data['metadata'] ?? null,
             organization_id: $data['organization_id'] ?? null,
-            priority: TicketPriority::tryFrom($data['priority'] ?? null),
+            priority: $priority,
             problem_id: $data['problem_id'] ?? null,
             raw_subject: $data['raw_subject'] ?? null,
             recipient: $data['recipient'] ?? null,
             requester: $data['requester'] ?? null,
-            requester_id: $data['requester_id'],
+            requester_id: $data['requester_id'] ?? null,
             self_update: $data['self_update'] ?? null,
             satisfaction_rating: $data['satisfaction_rating'] ?? null,
             sharing_agreement_ids: $data['sharing_agreement_ids'] ?? null,
@@ -119,8 +138,8 @@ class SingleTicketDTO extends Data
             submitter_id: $data['submitter_id'] ?? null,
             tags: $data['tags'] ?? null,
             ticket_form_id: $data['ticket_form_id'] ?? null,
-            type: TicketType::tryFrom($data['type'] ?? null),
-            updated_at: Carbon::parse($data['updated_at']),
+            type: $type,
+            updated_at: Carbon::parse($data['updated_at'] ?? null),
             updated_stamp: $data['updated_stamp'] ?? null,
             url: $data['url'] ?? null,
             via: $data['via'] ?? null,

@@ -3,6 +3,7 @@
 namespace CodebarAg\Zendesk\Requests;
 
 use CodebarAg\Zendesk\Dto\Tickets\Attachments\AttachmentDTO;
+use CodebarAg\Zendesk\Dto\Tickets\Attachments\UploadDTO;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Contracts\Response;
 use Saloon\Enums\Method;
@@ -41,8 +42,6 @@ class CreateAttachmentRequest extends Request implements HasBody
 
     public function createDtoFromResponse(Response $response): mixed
     {
-        $response = $response->json();
-
-        return AttachmentDTO::fromResponse($response);
+        return UploadDTO::fromResponse($response);
     }
 }

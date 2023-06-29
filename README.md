@@ -45,6 +45,16 @@ knowledge base and online communities.
 |-----------|-------|----------------|-----------|
 | >v1.0     | >8.2  | > Laravel 10.0 | ✅         |
 
+## Authentication
+
+The currently supported authentication methods are:
+
+| Method 	           | Supported 	 |
+|--------------------|:-----------:|
+| Basic Auth         |      ✅      |
+| API token          |      ✅      |
+| OAuth access token |      ❌      |
+
 ## ⚙️ Installation
 
 You can install the package via composer:
@@ -53,17 +63,131 @@ You can install the package via composer:
 composer require codebar-ag/laravel-zendesk
 ```
 
+Optionally, you can publish the config file with:
+
+```bash
+php artisan vendor:publish --provider="CodebarAg\Zendesk\ZendeskServiceProvider" --tag="config"
+```
+
+You can add the following env variables to your `.env` file:
+
+```dotenv
+ZENDESK_SUBDOMAIN= # required
+ZENDESK_AUTHENTICATION_METHOD= # basic or token, (token is default)
+ZENDESK_EMAIL_ADDRESS= # required for both basic and token
+ZENDESK_API_TOKEN= # required only for token authentication
+ZENDESK_API_PASSWORD= # required only for basic authentication
+```
+
 ## Usage
 
-### Authentication
+To make use of the package, you need to create a ZendeskConnector instance.
 
-The currently supported authentication methods are:
+```php
+use CodebarAg\Zendesk\ZendeskConnector;
+...
 
-| Method 	             | 	   |
-|----------------------|-----|
-| Basic authentication | No  |
-| API token            | Yes |
-| OAuth access token   | No  |
+$connector = new ZendeskConnector();
+
+````
+
+### Requests
+
+The following requests are currently supported:
+
+| Request 	         | Supported 	 |
+|-------------------|:-----------:|
+| List Tickets      |      ✅      |
+| Count Tickets     |      ✅      |
+| Show Ticket       |      ✅      |
+| Create Ticket     |      ✅      |
+| Create Attachment |      ✅      |
+
+### Responses
+
+The following responses are currently supported for retrieving the response body:
+
+| Response Methods	 | Description                                                                                                                        | Supported 	 |
+|----------------|------------------------------------------------------------------------------------------------------------------------------------|:-----------:|
+| body()         | Returns the HTTP body as a string                                                                                                  |      ✅      |
+| json()         | Retrieves a JSON response body and json_decodes it into an array.                                                                  |      ✅      |
+| object()       | Retrieves a JSON response body and json_decodes it into an object.                                                                 |      ✅      |
+| collect()      | Retrieves a JSON response body and json_decodes it into a Laravel collection. **Requires illuminate/collections to be installed.** |      ✅      |
+| dto()          | Converts the response into a data-transfer object. You must define your DTO first                                                  |      ✅      |
+
+See https://docs.saloon.dev/the-basics/responses for more information.
+
+### Examples
+
+#### Upload an attachment
+
+```php
+$upload = $connector->send(
+    new CreateAttachmentRequest(
+        fileName: 'head8.png',
+        mimeType: Storage::disk('local')->mimeType('public/head8.png'),
+        stream: Storage::disk('local')->readStream('public/head8.png')
+    )
+);
+
+return $upload->json();
+````
+
+```json
+
+```
+
+
+```php
+
+use CodebarAg\Zendesk\Requests\AllTicketsRequest;
+use CodebarAg\Zendesk\Requests\CountTicketsRequest;
+use CodebarAg\Zendesk\Requests\CreateAttachmentRequest;
+use CodebarAg\Zendesk\Requests\CreateSingleTicketRequest;
+use CodebarAg\Zendesk\Requests\SingleTicketRequest;
+use CodebarAg\Zendesk\DTO\CommentDTO;
+use CodebarAg\Zendesk\DTO\CreateTicketDTO;
+use CodebarAg\Zendesk\Enums\TicketPriority;
+use Illuminate\Support\Facades\Storage;
+use CodebarAg\Zendesk\ZendeskConnector;
+
+...
+
+$connector = new ZendeskConnector();
+
+$listTicketResponse = $connector->send(new AllTicketsRequest());
+dump($listTicketResponse->dto());
+
+$showTicketResponse = $connector->send(new SingleTicketRequest(1));
+dump($showTicketResponse->dto());
+
+$countTicketResponse = $connector->send(new SingleTicketRequest(1));
+dump($countTicketResponse->dto());
+
+$createTicketResponse = $connector->send(
+    new CreateSingleTicketRequest(
+        CreateTicketDTO::fromArray([
+            "comment" => CommentDTO::fromArray([
+                "body" => "The smoke is very colorful."
+            ]),
+            "priority" => TicketPriority::URGENT,
+            "subject" => "My printer is on fire!"
+        ])
+    )
+);
+
+dump($createTicketResponse->dto());
+
+$response = $connector->send(
+    new CreateAttachmentRequest(
+        fileName: 'head8.png',
+        mimeType: Storage::disk('local')->mimeType('public/head8.png'),
+        stream: Storage::disk('local')->readStream('public/head8.png')
+    )
+);
+
+dump($response->dto());
+```
 
 ## 🚧 Testing
 
