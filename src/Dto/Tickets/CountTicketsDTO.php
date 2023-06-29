@@ -1,6 +1,6 @@
 <?php
 
-namespace CodebarAg\Zendesk\Dto\Zendesk\Tickets;
+namespace CodebarAg\Zendesk\Dto\Tickets;
 
 use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
@@ -10,7 +10,7 @@ class CountTicketsDTO extends Data
 {
     public function __construct(
         public ?int $value,
-        public Carbon $refreshed_at,
+        public ?Carbon $refreshed_at,
     ) {
     }
 

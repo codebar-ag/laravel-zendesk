@@ -1,7 +1,9 @@
 <?php
 
-namespace CodebarAg\Zendesk\Dto\Zendesk\Tickets\Comments;
+namespace CodebarAg\Zendesk\Dto\Tickets\Comments;
 
+use CodebarAg\Zendesk\Dto\Tickets\Attachments\AttachmentDTO;
+use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Data;
 

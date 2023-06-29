@@ -1,8 +1,8 @@
 <?php
 
-namespace CodebarAg\Zendesk\Http\Connector\Zendesk\Requests;
+namespace CodebarAg\Zendesk\Requests;
 
-use CodebarAg\Zendesk\Dto\Zendesk\Tickets\SingleTicketDTO;
+use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
 use Saloon\Contracts\Response;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;

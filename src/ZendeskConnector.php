@@ -1,6 +1,6 @@
 <?php
 
-namespace CodebarAg\Zendesk\Http\Connector\Zendesk;
+namespace CodebarAg\Zendesk;
 
 use Saloon\Contracts\Authenticator;
 use Saloon\Http\Auth\TokenAuthenticator;
@@ -10,6 +10,10 @@ class ZendeskConnector extends Connector
 {
     public function resolveBaseUrl(): string
     {
+        if (! config('zendesk.subdomain')) {
+            throw new \Exception('No subdomain provided.', 500);
+        }
+
         return 'https://'.config('zendesk.subdomain').'.zendesk.com/api/v2';
     }
 
