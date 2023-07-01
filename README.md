@@ -15,8 +15,18 @@ knowledge base and online communities.
 ## 🛠 Requirements
 
 | Package 	 | PHP 	 | Laravel 	      | Zendesk 	 |
-|-----------|-------|----------------|-----------|
-| >v1.0     | >8.2  | > Laravel 10.0 | ✅         |
+|-----------|-------|----------------|:---------:|
+| >v1.0     | >8.2  | > Laravel 10.0 |     ✅     |
+
+## Authentication
+
+The currently supported authentication methods are:
+
+| Method 	           | Supported 	 |
+|--------------------|:-----------:|
+| Basic Auth         |      ✅      |
+| API token          |      ✅      |
+| OAuth access token |      ❌      |
 
 ## ⚙️ Installation
 
@@ -26,17 +36,192 @@ You can install the package via composer:
 composer require codebar-ag/laravel-zendesk
 ```
 
+Optionally, you can publish the config file with:
+
+```bash
+php artisan vendor:publish --provider="CodebarAg\Zendesk\ZendeskServiceProvider" --tag="config"
+```
+
+You can add the following env variables to your `.env` file:
+
+```dotenv
+ZENDESK_SUBDOMAIN=your-subdomain #required
+ZENDESK_AUTHENTICATION_METHOD=token #default ['basic', 'token']
+ZENDESK_EMAIL_ADDRESS=test@example.com #required
+ZENDESK_API_TOKEN=your-api-token #required only for token authentication
+ZENDESK_API_PASSWORD=your-password #required only for basic authentication
+```
+
+`Note: We handle base64 encoding for you so you don't have to encode your credentials.`
+
+You can retrieve your API token from
+your [Zendesk Dashboard](https://developer.zendesk.com/api-reference/introduction/security-and-auth/)
+
 ## Usage
 
-### Authentication
+To make use of the package, you need to create a ZendeskConnector instance.
 
-The currently supported authentication methods are:
+```php
+use CodebarAg\Zendesk\ZendeskConnector;
+...
 
-| Method 	             | 	   |
-|----------------------|-----|
-| Basic authentication | No  |
-| API token            | Yes |
-| OAuth access token   | No  |
+$connector = new ZendeskConnector();
+````
+
+### Requests
+
+The following requests are currently supported:
+
+| Request 	         | Supported 	 |
+|-------------------|:-----------:|
+| List Tickets      |      ✅      |
+| Count Tickets     |      ✅      |
+| Show Ticket       |      ✅      |
+| Create Ticket     |      ✅      |
+| Create Attachment |      ✅      |
+
+### Responses
+
+The following responses are currently supported for retrieving the response body:
+
+| Response Methods	 | Description                                                                                                                        | Supported 	 |
+|-------------------|------------------------------------------------------------------------------------------------------------------------------------|:-----------:|
+| body              | Returns the HTTP body as a string                                                                                                  |      ✅      |
+| json              | Retrieves a JSON response body and json_decodes it into an array.                                                                  |      ✅      |
+| object            | Retrieves a JSON response body and json_decodes it into an object.                                                                 |      ✅      |
+| collect           | Retrieves a JSON response body and json_decodes it into a Laravel collection. **Requires illuminate/collections to be installed.** |      ✅      |
+| dto               | Converts the response into a data-transfer object. You must define your DTO first                                                  |      ✅      |
+
+See https://docs.saloon.dev/the-basics/responses for more information.
+
+### Enums
+
+We provide enums for the following values:
+
+| Enum 	            |                               Values 	                                |
+|-------------------|:---------------------------------------------------------------------:|
+| TicketPriority    |                   'urgent', 'high', 'normal', 'low'                   |
+| TicketType        |               'incident', 'problem', 'question', 'task'               |
+| MalwareScanResult | 'malware_found', 'malware_not_found', 'failed_to_scan', 'not_scanned' |
+
+`Note: When using the dto method on a response, the enum values will be converted to their respective enum class.`
+
+### DTOs
+
+We provide DTOs for the following:
+
+| DTO 	           |
+|-----------------|
+| AttachmentDTO   |
+| ThumbnailDTO    |
+| UploadDTO       |
+| CommentDTO      |
+| AllTicketsDTO   |
+| CountTicketsDTO |
+| SingleTicketDTO |
+
+`Note: This is the prefered method of interfacing with Requests and Responses however you can still use the json, object and collect methods. and pass arrays to the requests.`
+
+### Examples
+
+#### Create a ticket
+
+```php
+use CodebarAg\Zendesk\Requests\CreateSingleTicketRequest;
+use CodebarAg\Zendesk\DTOs\SingleTicketDTO;
+use CodebarAg\Zendesk\DTOs\CommentDTO;
+use CodebarAg\Zendesk\Enums\TicketPriority;
+...
+
+$ticketResponse = $connector->send(
+    new CreateSingleTicketRequest(
+        SingleTicketDTO::fromArray([
+            'comment' => CommentDTO::fromArray([
+                'body' => 'The smoke is very colorful.',
+            ]),
+            'priority' => TicketPriority::URGENT,
+            "subject" => "My printer is on fire!",
+            "custom_fields" => [
+                [
+                    "id" => 12345678910111,
+                    "value" => "Your custom field value"
+                ],
+                [
+                    "id" => 12345678910112,
+                    "value" => "Your custom field value 2"
+                ],
+            ],
+        ])
+    )
+);
+
+$ticket = $ticketResponse->dto();
+````
+
+#### List all tickets
+
+```php
+use CodebarAg\Zendesk\Requests\AllTicketsRequest;
+...
+
+$listTicketResponse = $connector->send(new AllTicketsRequest());
+$listTicketResponse->dto();
+````
+
+#### Count all tickets
+
+```php
+use CodebarAg\Zendesk\Requests\CountTicketsRequest;
+...
+
+$countTicketResponse = $connector->send(new CountTicketsRequest());
+$countTicketResponse->dto();
+````
+
+#### Show a ticket
+
+```php
+use CodebarAg\Zendesk\Requests\ShowTicketRequest;
+...
+
+$ticketID = 1;
+
+$showTicketResponse = $connector->send(new ShowTicketRequest($ticketID));
+$showTicketResponse->dto();
+````
+
+#### Upload an attachment
+
+```php
+use CodebarAg\Zendesk\Requests\CreateAttachmentRequest;
+use CodebarAg\Zendesk\Requests\CreateSingleTicketRequest;
+use Illuminate\Support\Facades\Storage;
+
+$uploadResponse = $connector->send(
+    new CreateAttachmentRequest(
+        fileName: 'someimage.png',
+        mimeType: Storage::disk('local')->mimeType('public/someimage.png'),
+        stream: Storage::disk('local')->readStream('public/someimage.png')
+    )
+);
+
+$token = $uploadResponse->dto()->token;
+
+$ticketResponse = $connector->send(
+    new CreateSingleTicketRequest(
+        SingleTicketDTO::fromArray([
+            'comment' => CommentDTO::fromArray([
+                ...
+                'uploads' => [
+                    $token,
+                ],
+            ]),
+        ])
+    )
+);
+
+$ticket = $ticketResponse->dto();
+```
 
 ## 🚧 Testing
 
