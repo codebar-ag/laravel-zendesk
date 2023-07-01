@@ -5,11 +5,11 @@
 [![run-tests](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/run-tests.yml/badge.svg)](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/run-tests.yml)
 [![PHPStan](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/phpstan.yml/badge.svg)](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/phpstan.yml)
 
-This package was developed to give you a quick start to create tickets via the Zendesk API.
+This package was developed to give you a quick start to creating tickets via the Zendesk API.
 
 ## 💡 What is Zendesk?
 
-Zendesk is a cloud-based help desk management solution offering customizable tools to build customer service portal,
+Zendesk is a cloud-based help desk management solution offering customizable tools to build customer service portals,
 knowledge base and online communities.
 
 ## 🛠 Requirements
@@ -59,7 +59,7 @@ your [Zendesk Dashboard](https://developer.zendesk.com/api-reference/introductio
 
 ## Usage
 
-To make use of the package, you need to create a ZendeskConnector instance.
+To use the package, you need to create a ZendeskConnector instance.
 
 ```php
 use CodebarAg\Zendesk\ZendeskConnector;
@@ -239,7 +239,7 @@ Run the tests:
 
 ## 📝 Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+Please see [CHANGELOG](CHANGELOG.md) for recent changes.
 
 ## ✏️ Contributing
 
@@ -257,15 +257,16 @@ composer test
 
 ## 🧑‍💻 Security Vulnerabilities
 
-Please review [our security policy](.github/SECURITY.md) on how to report security vulnerabilities.
+Please review [our security policy](.github/SECURITY.md) on reporting security vulnerabilities.
 
 ## 🙏 Credits
-
+- [Rhys Lees](https://github.com/RhysLees)
 - [Sebastian Fix](https://github.com/StanBarrows)
 - [All Contributors](../../contributors)
 - [Skeleton Repository from Spatie](https://github.com/spatie/package-skeleton-laravel)
 - [Laravel Package Training from Spatie](https://spatie.be/videos/laravel-package-training)
+- [Laravel Saloon by Sam Carré]([https://spatie.be/videos/laravel-package-training](https://github.com/Sammyjo20/Saloon)
 
 ## 🎭 License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please have a look at [License File](LICENSE.md) for more information.
