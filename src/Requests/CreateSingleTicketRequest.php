@@ -2,7 +2,6 @@
 
 namespace CodebarAg\Zendesk\Requests;
 
-use CodebarAg\Zendesk\Dto\Tickets\CreateTicketDTO;
 use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Contracts\Response;

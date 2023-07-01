@@ -26,7 +26,7 @@ final class ThumbnailDTO extends Data
 
     public static function fromArray(array $data): self
     {
-        return new static(
+        return new self(
             content_type: $data['content_type'] ?? null,
             content_url: $data['content_url'] ?? null,
             deleted: $data['deleted'] ?? null,

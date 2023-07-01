@@ -3,8 +3,6 @@
 namespace CodebarAg\Zendesk\Dto\Tickets\Attachments;
 
 use CodebarAg\Zendesk\Enums\MalwareScanResult;
-use Illuminate\Support\Carbon;
-use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
 
 final class AttachmentDTO extends Data
@@ -37,7 +35,7 @@ final class AttachmentDTO extends Data
             }
         }
 
-        return new static(
+        return new self(
             content_type: $data['content_type'] ?? null,
             content_url: $data['content_url'] ?? null,
             deleted: $data['deleted'] ?? null,

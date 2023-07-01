@@ -8,7 +8,6 @@ use CodebarAg\Zendesk\Enums\TicketType;
 use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
-use function Pest\Laravel\instance;
 
 final class SingleTicketDTO extends Data
 {
@@ -82,19 +81,19 @@ final class SingleTicketDTO extends Data
             $comment = CommentDTO::fromArray($comment);
         }
 
-        $priority =  array_key_exists('priority', $data) ? $data['priority'] : null;
+        $priority = array_key_exists('priority', $data) ? $data['priority'] : null;
 
         if ($priority && ! $priority instanceof TicketPriority) {
             $priority = TicketPriority::tryFrom($priority);
         }
 
-        $type =  array_key_exists('type', $data) ? $data['type'] : null;
+        $type = array_key_exists('type', $data) ? $data['type'] : null;
 
         if ($type && ! $type instanceof TicketType) {
             $type = TicketType::tryFrom($type);
         }
 
-        return new static(
+        return new self(
             allow_attachments: $data['allow_attachments'] ?? null,
             allow_channelback: $data['allow_channelback'] ?? null,
             assignee_email: $data['assignee_email'] ?? null,

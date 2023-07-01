@@ -2,7 +2,6 @@
 
 namespace CodebarAg\Zendesk\Dto\Tickets\Attachments;
 
-use CodebarAg\Zendesk\Enums\MalwareScanResult;
 use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
@@ -34,7 +33,7 @@ final class UploadDTO extends Data
             }
         }
 
-        return new static(
+        return new self(
             token: $data['token'] ?? null,
             expires_at: Carbon::parse($data['expires_at'] ?? null),
             attachments: $attachments,

@@ -2,7 +2,6 @@
 
 namespace CodebarAg\Zendesk\Requests;
 
-use CodebarAg\Zendesk\Dto\Tickets\Attachments\AttachmentDTO;
 use CodebarAg\Zendesk\Dto\Tickets\Attachments\UploadDTO;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Contracts\Response;
@@ -25,7 +24,8 @@ class CreateAttachmentRequest extends Request implements HasBody
         protected string $fileName,
         protected string $mimeType,
         protected mixed $stream,
-    ) { }
+    ) {
+    }
 
     protected function defaultHeaders(): array
     {

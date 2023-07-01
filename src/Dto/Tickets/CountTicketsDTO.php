@@ -18,7 +18,7 @@ final class CountTicketsDTO extends Data
     {
         $data = $response->json()['count'];
 
-        return new static(
+        return new self(
             value: $data['value'],
             refreshed_at: Carbon::parse($data['refreshed_at']),
         );

@@ -2,7 +2,6 @@
 
 namespace CodebarAg\Zendesk\Dto\Tickets;
 
-use Illuminate\Support\Collection;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
 
@@ -20,7 +19,7 @@ final class AllTicketsDTO extends Data
     {
         $data = $response->json();
 
-        return new static(
+        return new self(
             tickets: collect($data['tickets'])->map(function (array $ticket) {
                 return SingleTicketDTO::fromArray($ticket);
             })->toArray(),

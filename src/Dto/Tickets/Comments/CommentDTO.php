@@ -2,8 +2,6 @@
 
 namespace CodebarAg\Zendesk\Dto\Tickets\Comments;
 
-use CodebarAg\Zendesk\Dto\Tickets\Attachments\AttachmentDTO;
-use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Data;
 
@@ -28,7 +26,7 @@ final class CommentDTO extends Data
 
     public static function fromArray(array $data): self
     {
-        return new static(
+        return new self(
             attachments: $data['attachments'] ?? null,
             audit_id: $data['audit_id'] ?? null,
             author_id: $data['author_id'] ?? null,
