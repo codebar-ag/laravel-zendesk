@@ -7,7 +7,7 @@ use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Data;
 
-class CommentDTO extends Data
+final class CommentDTO extends Data
 {
     public function __construct(
         public ?array $attachments,

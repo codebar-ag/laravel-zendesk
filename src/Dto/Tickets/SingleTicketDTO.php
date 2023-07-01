@@ -10,7 +10,7 @@ use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
 use function Pest\Laravel\instance;
 
-class SingleTicketDTO extends Data
+final class SingleTicketDTO extends Data
 {
     public function __construct(
         public ?bool $allow_attachments,

@@ -7,7 +7,7 @@ use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
 
-class AttachmentDTO extends Data
+final class AttachmentDTO extends Data
 {
     public function __construct(
         public ?string $content_type,

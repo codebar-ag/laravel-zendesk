@@ -6,7 +6,7 @@ use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
 
-class CountTicketsDTO extends Data
+final class CountTicketsDTO extends Data
 {
     public function __construct(
         public ?int $value,

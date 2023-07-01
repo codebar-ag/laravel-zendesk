@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
 
-class AllTicketsDTO extends Data
+final class AllTicketsDTO extends Data
 {
     public function __construct(
         public array $tickets,
