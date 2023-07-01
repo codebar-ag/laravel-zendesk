@@ -5,7 +5,7 @@ namespace CodebarAg\Zendesk\Dto\Tickets\Attachments;
 use CodebarAg\Zendesk\Enums\MalwareScanResult;
 use Spatie\LaravelData\Data;
 
-final class AttachmentDTO extends Data
+class AttachmentDTO extends Data
 {
     public function __construct(
         public ?string $content_type,

@@ -6,7 +6,7 @@ use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
 
-final class UploadDTO extends Data
+class UploadDTO extends Data
 {
     public function __construct(
         public string $token,

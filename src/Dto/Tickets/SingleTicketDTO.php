@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
 
-final class SingleTicketDTO extends Data
+class SingleTicketDTO extends Data
 {
     public function __construct(
         public ?bool $allow_attachments,

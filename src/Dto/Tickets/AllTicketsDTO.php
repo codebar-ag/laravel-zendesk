@@ -5,7 +5,7 @@ namespace CodebarAg\Zendesk\Dto\Tickets;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
 
-final class AllTicketsDTO extends Data
+class AllTicketsDTO extends Data
 {
     public function __construct(
         public array $tickets,

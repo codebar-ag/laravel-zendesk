@@ -5,7 +5,7 @@ namespace CodebarAg\Zendesk\Dto\Tickets\Comments;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Data;
 
-final class CommentDTO extends Data
+class CommentDTO extends Data
 {
     public function __construct(
         public ?array $attachments,
