@@ -39,7 +39,7 @@ composer require codebar-ag/laravel-zendesk
 Optionally, you can publish the config file with:
 
 ```bash
-php artisan vendor:publish --provider="CodebarAg\Zendesk\ZendeskServiceProvider" --tag="config"
+php artisan vendor:publish --provider="CodebarAg\Zendesk\ZendeskServiceProvider"
 ```
 
 You can add the following env variables to your `.env` file:
