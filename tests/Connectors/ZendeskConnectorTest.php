@@ -1,10 +1,6 @@
 <?php
 
-use CodebarAg\Zendesk\Enums\TicketPriority;
-use CodebarAg\Zendesk\Requests\AllTicketsRequest;
 use CodebarAg\Zendesk\ZendeskConnector;
-use Saloon\Http\Faking\MockResponse;
-use Saloon\Laravel\Http\Faking\MockClient;
 
 it('will throw an exception if a subdomain is not set', closure: function () {
     $connector = new ZendeskConnector;
@@ -14,7 +10,7 @@ it('will throw an exception if a subdomain is not set', closure: function () {
 
 it('will not throw an exception if a subdomain is set', closure: function () {
     config([
-        'zendesk.subdomain' => 'codebarsolutionsag'
+        'zendesk.subdomain' => 'codebarsolutionsag',
     ]);
 
     $connector = new ZendeskConnector;
@@ -24,7 +20,7 @@ it('will not throw an exception if a subdomain is set', closure: function () {
 
 it('will return the base path', closure: function () {
     config([
-        'zendesk.subdomain' => 'codebarsolutionsag'
+        'zendesk.subdomain' => 'codebarsolutionsag',
     ]);
 
     $connector = new ZendeskConnector;
@@ -33,7 +29,6 @@ it('will return the base path', closure: function () {
     expect($path)->toBe('https://codebarsolutionsag.zendesk.com/api/v2');
 
 });
-
 
 it('will throw an exception if an auth method is not set', closure: function () {
     config([
@@ -62,7 +57,6 @@ it('will not throw an exception if an auth method valid', closure: function () {
         'zendesk.auth.api_token' => 'test-token',
         'zendesk.auth.password' => 'test-password',
     ]);
-
 
     config([
         'zendesk.auth.method' => 'token',

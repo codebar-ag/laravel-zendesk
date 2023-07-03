@@ -28,6 +28,7 @@ class ZendeskConnector extends Connector
     protected function defaultAuth(): ?Authenticator
     {
         $authenticationString = $this->setAuth();
+
         return new TokenAuthenticator(base64_encode($authenticationString), 'Basic');
     }
 
