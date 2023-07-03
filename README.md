@@ -207,6 +207,8 @@ $uploadResponse = $connector->send(
 
 $token = $uploadResponse->dto()->token;
 
+// And to pass to your ticket request
+
 $ticketResponse = $connector->send(
     new CreateSingleTicketRequest(
         SingleTicketDTO::fromArray([

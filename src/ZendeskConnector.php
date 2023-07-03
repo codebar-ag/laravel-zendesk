@@ -27,6 +27,12 @@ class ZendeskConnector extends Connector
 
     protected function defaultAuth(): ?Authenticator
     {
+        $authenticationString = $this->setAuth();
+        return new TokenAuthenticator(base64_encode($authenticationString), 'Basic');
+    }
+
+    public function setAuth(): string
+    {
         if (! config('zendesk.auth.method')) {
             throw new \Exception('No authentication method provided.', 500);
         }
@@ -47,12 +53,10 @@ class ZendeskConnector extends Connector
             throw new \Exception('No API token provided for token authentication.', 500);
         }
 
-        $authenticationString = match (config('zendesk.auth.method')) {
-            'basic' => $authenticationString = config('zendesk.auth.email_address').':'.config('zendesk.auth.password'),
-            'token' => $authenticationString = config('zendesk.auth.email_address').'/token:'.config('zendesk.auth.api_token'),
+        return match (config('zendesk.auth.method')) {
+            'basic' => config('zendesk.auth.email_address').':'.config('zendesk.auth.password'),
+            'token' => config('zendesk.auth.email_address').'/token:'.config('zendesk.auth.api_token'),
             default => throw new \Exception('Invalid authentication method provided.', 500),
         };
-
-        return new TokenAuthenticator(base64_encode($authenticationString), 'Basic');
     }
 }
