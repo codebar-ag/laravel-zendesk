@@ -5,6 +5,7 @@ namespace CodebarAg\Zendesk\Tests;
 use CodebarAg\Zendesk\ZendeskServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Spatie\LaravelData\Support\DataConfig;
 
 class TestCase extends Orchestra
 {
@@ -15,6 +16,11 @@ class TestCase extends Orchestra
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'CodebarAg\\Zendesk\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
+
+        // Provide a config array to DataConfig
+        $this->app->when(DataConfig::class)
+            ->needs('$config')
+            ->give([]);
     }
 
     protected function getPackageProviders($app): array

@@ -3,6 +3,7 @@
 namespace CodebarAg\Zendesk\Requests;
 
 use CodebarAg\Zendesk\Dto\Tickets\CountTicketsDTO;
+use Exception;
 use Saloon\Contracts\Response;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -18,6 +19,10 @@ class CountTicketsRequest extends Request
 
     public function createDtoFromResponse(Response $response): mixed
     {
+        if (! $response->successful()) {
+            throw new Exception('Request was not successful. Unable to create DTO.');
+        }
+
         return CountTicketsDTO::fromResponse($response);
     }
 }

@@ -5,6 +5,8 @@ namespace CodebarAg\Zendesk\Dto\Tickets;
 use CodebarAg\Zendesk\Dto\Tickets\Comments\CommentDTO;
 use CodebarAg\Zendesk\Enums\TicketPriority;
 use CodebarAg\Zendesk\Enums\TicketType;
+use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
@@ -68,83 +70,87 @@ class SingleTicketDTO extends Data
 
     public static function fromResponse(Response $response): self
     {
-        $data = $response->json()['ticket'];
+        $data = Arr::get($response->json(), 'ticket');
+
+        if (! $data) {
+            throw new Exception('Unable to create DTO. Data missing from response.');
+        }
 
         return self::fromArray($data);
     }
 
     public static function fromArray(array $data): self
     {
-        $comment = array_key_exists('comment', $data) ? $data['comment'] : null;
+        $comment = Arr::get($data, 'comment');
 
         if ($comment && ! $comment instanceof CommentDTO) {
             $comment = CommentDTO::fromArray($comment);
         }
 
-        $priority = array_key_exists('priority', $data) ? $data['priority'] : null;
+        $priority = Arr::get($data, 'priority');
 
         if ($priority && ! $priority instanceof TicketPriority) {
             $priority = TicketPriority::tryFrom($priority);
         }
 
-        $type = array_key_exists('type', $data) ? $data['type'] : null;
+        $type = Arr::get($data, 'type');
 
         if ($type && ! $type instanceof TicketType) {
             $type = TicketType::tryFrom($type);
         }
 
         return new self(
-            allow_attachments: $data['allow_attachments'] ?? null,
-            allow_channelback: $data['allow_channelback'] ?? null,
-            assignee_email: $data['assignee_email'] ?? null,
-            assignee_id: $data['assignee_id'] ?? null,
-            attribute_value_ids: $data['attribute_value_ids'] ?? null,
-            brand_id: $data['brand_id'] ?? null,
-            collaborator_ids: $data['collaborator_ids'] ?? null,
-            collaborators: $data['collaborators'] ?? null,
+            allow_attachments: Arr::get($data, 'allow_attachments'),
+            allow_channelback: Arr::get($data, 'allow_channelback'),
+            assignee_email: Arr::get($data, 'assignee_email'),
+            assignee_id: Arr::get($data, 'assignee_id'),
+            attribute_value_ids: Arr::get($data, 'attribute_value_ids'),
+            brand_id: Arr::get($data, 'brand_id'),
+            collaborator_ids: Arr::get($data, 'collaborator_ids'),
+            collaborators: Arr::get($data, 'collaborators'),
             comment: $comment,
-            created_at: Carbon::parse($data['created_at'] ?? null),
-            custom_fields: $data['custom_fields'] ?? null,
-            description: $data['description'] ?? null,
-            due_at: Carbon::parse($data['due_at'] ?? null),
-            email_cc_ids: $data['email_cc_ids'] ?? null,
-            email_ccs: $data['email_ccs'] ?? null,
-            external_id: $data['external_id'] ?? null,
-            follower_ids: $data['follower_ids'] ?? null,
-            followers: $data['followers'] ?? null,
-            followup_ids: $data['followup_ids'] ?? null,
-            forum_topic_id: $data['forum_topic_id'] ?? null,
-            from_messaging_channel: $data['from_messaging_channel'] ?? null,
-            group_id: $data['group_id'] ?? null,
-            has_incidents: $data['has_incidents'] ?? null,
-            id: $data['id'] ?? null,
-            is_public: $data['is_public'] ?? null,
-            macro_id: $data['macro_id'] ?? null,
-            macro_ids: $data['macro_ids'] ?? null,
-            metadata: $data['metadata'] ?? null,
-            organization_id: $data['organization_id'] ?? null,
+            created_at: Carbon::parse(Arr::get($data, 'created_at')),
+            custom_fields: Arr::get($data, 'custom_fields'),
+            description: Arr::get($data, 'description'),
+            due_at: Carbon::parse(Arr::get($data, 'due_at')),
+            email_cc_ids: Arr::get($data, 'email_cc_ids'),
+            email_ccs: Arr::get($data, 'email_ccs'),
+            external_id: Arr::get($data, 'external_id'),
+            follower_ids: Arr::get($data, 'follower_ids'),
+            followers: Arr::get($data, 'followers'),
+            followup_ids: Arr::get($data, 'followup_ids'),
+            forum_topic_id: Arr::get($data, 'forum_topic_id'),
+            from_messaging_channel: Arr::get($data, 'from_messaging_channel'),
+            group_id: Arr::get($data, 'group_id'),
+            has_incidents: Arr::get($data, 'has_incidents'),
+            id: Arr::get($data, 'id'),
+            is_public: Arr::get($data, 'is_public'),
+            macro_id: Arr::get($data, 'macro_id'),
+            macro_ids: Arr::get($data, 'macro_ids'),
+            metadata: Arr::get($data, 'metadata'),
+            organization_id: Arr::get($data, 'organization_id'),
             priority: $priority,
-            problem_id: $data['problem_id'] ?? null,
-            raw_subject: $data['raw_subject'] ?? null,
-            recipient: $data['recipient'] ?? null,
-            requester: $data['requester'] ?? null,
-            requester_id: $data['requester_id'] ?? null,
-            self_update: $data['self_update'] ?? null,
-            satisfaction_rating: $data['satisfaction_rating'] ?? null,
-            sharing_agreement_ids: $data['sharing_agreement_ids'] ?? null,
-            status: $data['status'] ?? null,
-            subject: $data['subject'] ?? null,
-            submitter_id: $data['submitter_id'] ?? null,
-            tags: $data['tags'] ?? null,
-            ticket_form_id: $data['ticket_form_id'] ?? null,
+            problem_id: Arr::get($data, 'problem_id'),
+            raw_subject: Arr::get($data, 'raw_subject'),
+            recipient: Arr::get($data, 'recipient'),
+            requester: Arr::get($data, 'requester'),
+            requester_id: Arr::get($data, 'requester_id'),
+            self_update: Arr::get($data, 'self_update'),
+            satisfaction_rating: Arr::get($data, 'satisfaction_rating'),
+            sharing_agreement_ids: Arr::get($data, 'sharing_agreement_ids'),
+            status: Arr::get($data, 'status'),
+            subject: Arr::get($data, 'subject'),
+            submitter_id: Arr::get($data, 'submitter_id'),
+            tags: Arr::get($data, 'tags'),
+            ticket_form_id: Arr::get($data, 'ticket_form_id'),
             type: $type,
-            updated_at: Carbon::parse($data['updated_at'] ?? null),
-            updated_stamp: $data['updated_stamp'] ?? null,
-            url: $data['url'] ?? null,
-            via: $data['via'] ?? null,
-            via_followup_source_id: $data['via_followup_source_id'] ?? null,
-            via_id: $data['via_id'] ?? null,
-            voice_comment: $data['voice_comment'] ?? null,
+            updated_at: Carbon::parse(Arr::get($data, 'updated_at')),
+            updated_stamp: Arr::get($data, 'updated_stamp'),
+            url: Arr::get($data, 'url'),
+            via: Arr::get($data, 'via'),
+            via_followup_source_id: Arr::get($data, 'via_followup_source_id'),
+            via_id: Arr::get($data, 'via_id'),
+            voice_comment: Arr::get($data, 'voice_comment'),
         );
     }
 }

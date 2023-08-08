@@ -2,6 +2,8 @@
 
 namespace CodebarAg\Zendesk\Dto\Tickets;
 
+use Exception;
+use Illuminate\Support\Arr;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
 
@@ -19,13 +21,17 @@ class AllTicketsDTO extends Data
     {
         $data = $response->json();
 
+        if (! $data) {
+            throw new Exception('Unable to create DTO. Data missing from response.');
+        }
+
         return new self(
-            tickets: collect($data['tickets'])->map(function (array $ticket) {
+            tickets: collect(Arr::get($data, 'tickets'))->map(function (array $ticket) {
                 return SingleTicketDTO::fromArray($ticket);
             })->toArray(),
-            count: $data['count'],
-            next_page_url: $data['next_page'],
-            previous_page_url: $data['previous_page'],
+            count: Arr::get($data, 'count'),
+            next_page_url: Arr::get($data, 'next_page'),
+            previous_page_url: Arr::get($data, 'previous_page'),
         );
     }
 }

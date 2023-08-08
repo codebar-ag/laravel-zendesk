@@ -3,6 +3,7 @@
 namespace CodebarAg\Zendesk\Requests;
 
 use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
+use Exception;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Contracts\Response;
 use Saloon\Enums\Method;
@@ -40,6 +41,10 @@ class CreateSingleTicketRequest extends Request implements HasBody
 
     public function createDtoFromResponse(Response $response): mixed
     {
+        if (! $response->successful()) {
+            throw new Exception('Request was not successful. Unable to create DTO.');
+        }
+
         return SingleTicketDTO::fromResponse($response);
     }
 }
