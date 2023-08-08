@@ -1,0 +1,28 @@
+{
+    "statusCode": 404,
+    "headers": {
+        "Date": "Tue, 08 Aug 2023 13:18:12 GMT",
+        "Content-Type": "application\/json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "strict-transport-security": "max-age=0;",
+        "cache-control": "no-cache",
+        "x-zendesk-origin-server": "classic-app-server-759558d96c-8dfnl",
+        "x-request-id": [
+            "7f380b3dda7803b9-LHR",
+            "7f380b3dda7803b9-LHR"
+        ],
+        "x-runtime": "0.022401",
+        "X-Zendesk-Zorg": "yes",
+        "CF-Cache-Status": "DYNAMIC",
+        "Set-Cookie": [
+            "__cf_bm=oWgCGqj6tmJCV2tMr88g2GQEQAgQMOP2NxPrl.BGPGU-1691500692-0-AbZ4KZWi7MBVu5Kwo+FdPjZadDlf45E5fnGBMQ178FSegJupgGFsza+v0R5EOfn\/1YjMO58G5tROfJBVKC3QVG1QGgKuQLo\/LGyTrHwPfFdu; path=\/; expires=Tue, 08-Aug-23 13:48:12 GMT; domain=.zendesk.com; HttpOnly; Secure; SameSite=None",
+            "__cfruid=5549c1de53c611e745835a36b2ba231e201d856d-1691500692; path=\/; domain=.zendesk.com; HttpOnly; Secure; SameSite=None"
+        ],
+        "Report-To": "{\"endpoints\":[{\"url\":\"https:\\\/\\\/a.nel.cloudflare.com\\\/report\\\/v3?s=uwn7TtPaAUhwgPUZpwt32SiUOotc6%2FpIY4bkdsZzJUSM3ARWKjcnoi8yji1Yw34Rgx5Sd6t57EEqr29B8CKIgUywW2OtO6FIApa1%2BmjX5nmbn8ZX6Nm1I3RmUfny03lM2xuQdkTa2%2BL5pkuW9prNT8UQKCzS\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+        "NEL": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}",
+        "Server": "cloudflare",
+        "CF-RAY": "7f380b3dda7803b9-LHR"
+    },
+    "data": "{\n  \"error\": {\n    \"title\": \"No help desk at codebarsolutionsagwrong.zendesk.com\",\n    \"message\": \"There is no help desk configured at this address. This means that the address is available and that you can claim it at http:\/\/www.zendesk.com\/signup\"\n  }\n}\n"
+}

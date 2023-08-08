@@ -3,6 +3,7 @@
 namespace CodebarAg\Zendesk\Dto\Tickets\Attachments;
 
 use CodebarAg\Zendesk\Enums\MalwareScanResult;
+use Illuminate\Support\Arr;
 use Spatie\LaravelData\Data;
 
 class ThumbnailDTO extends Data
@@ -27,19 +28,19 @@ class ThumbnailDTO extends Data
     public static function fromArray(array $data): self
     {
         return new self(
-            content_type: $data['content_type'] ?? null,
-            content_url: $data['content_url'] ?? null,
-            deleted: $data['deleted'] ?? null,
-            file_name: $data['file_name'] ?? null,
-            height: $data['height'] ?? null,
-            id: $data['id'] ?? null,
-            inline: $data['inline'] ?? null,
-            malware_access_override: $data['malware_access_override'] ?? null,
-            malware_scan_result: MalwareScanResult::tryFrom($data['malware_scan_result'] ?? null),
-            mapped_content_url: $data['mapped_content_url'] ?? null,
-            size: $data['size'] ?? null,
-            url: $data['url'] ?? null,
-            width: $data['width'] ?? null,
+            content_type: Arr::get($data, 'content_type'),
+            content_url: Arr::get($data, 'content_url'),
+            deleted: Arr::get($data, 'deleted'),
+            file_name: Arr::get($data, 'file_name'),
+            height: Arr::get($data, 'height'),
+            id: Arr::get($data, 'id'),
+            inline: Arr::get($data, 'inline'),
+            malware_access_override: Arr::get($data, 'malware_access_override'),
+            malware_scan_result: MalwareScanResult::tryFrom(Arr::get($data, 'malware_scan_result')),
+            mapped_content_url: Arr::get($data, 'mapped_content_url'),
+            size: Arr::get($data, 'size'),
+            url: Arr::get($data, 'url'),
+            width: Arr::get($data, 'width'),
         );
     }
 }

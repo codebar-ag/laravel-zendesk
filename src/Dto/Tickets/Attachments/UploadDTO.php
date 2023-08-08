@@ -2,6 +2,7 @@
 
 namespace CodebarAg\Zendesk\Dto\Tickets\Attachments;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
@@ -18,14 +19,14 @@ class UploadDTO extends Data
 
     public static function fromResponse(Response $response): self
     {
-        $data = $response->json()['upload'];
+        $data = Arr::get($response->json(), 'upload');
 
         return self::fromArray($data);
     }
 
     public static function fromArray(array $data): self
     {
-        $attachments = $data['attachments'] ?? null;
+        $attachments = Arr::get($data, 'attachments');
 
         if ($attachments) {
             foreach ($attachments as $key => $attachment) {
@@ -34,10 +35,10 @@ class UploadDTO extends Data
         }
 
         return new self(
-            token: $data['token'] ?? null,
-            expires_at: Carbon::parse($data['expires_at'] ?? null),
+            token: Arr::get($data, 'token'),
+            expires_at: Carbon::parse(Arr::get($data, 'expires_at')),
             attachments: $attachments,
-            attachment: self::getAttachment($data['attachment'] ?? null),
+            attachment: self::getAttachment(Arr::get($data, 'attachment')),
         );
     }
 

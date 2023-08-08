@@ -1,0 +1,38 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "Date": "Mon, 03 Jul 2023 11:31:03 GMT",
+        "Content-Type": "application\/json; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "x-zendesk-api-version": "v2",
+        "x-zendesk-application-version": "v17438",
+        "x-frame-options": "SAMEORIGIN",
+        "zendesk-rate-limit-tickets-index": "total=100; remaining=99; resets=57",
+        "x-rate-limit": "400",
+        "rate-limit": "400",
+        "x-rate-limit-remaining": "399",
+        "rate-limit-remaining": "399",
+        "rate-limit-reset": "57",
+        "strict-transport-security": "max-age=31536000;",
+        "etag": "W\/\"8cdd07d5c75ffd1b225da69dee7e9985\"",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "x-zendesk-origin-server": "classic-app-server-6fc8db697c-cgrcj",
+        "set-cookie": [
+            "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca; path=\/; expires=Wed, 03 Jul 2024 04:36:17 GMT; secure; HttpOnly; SameSite=None",
+            "__cfruid=96c8e6e12fd2ae1a1fb6295fcc3d95a8a1bb0890-1688383863; path=\/; domain=.codebarsolutionsag.zendesk.com; HttpOnly; Secure; SameSite=None"
+        ],
+        "x-request-id": [
+            "7e0eccc609fa7692-LHR",
+            "7e0eccc609fa7692-LHR"
+        ],
+        "x-runtime": "0.124075",
+        "X-Zendesk-Zorg": "yes",
+        "CF-Cache-Status": "DYNAMIC",
+        "Report-To": "{\"endpoints\":[{\"url\":\"https:\\\/\\\/a.nel.cloudflare.com\\\/report\\\/v3?s=FrrIioe8zsDqyeop5JgV0cpPiCkfW62wcV7EiVd%2F0fYtWuHvzB5RW1ln%2FfyR4Zbuk7fIcfkLKjUQ8qj%2Fpi5htVqKXZJKY%2FMxVXu4YyHBaDW3pp6%2BIDFYAOAwYHwKH2cz1D0car5EemABOXu9BrdQog%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+        "NEL": "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}",
+        "Server": "cloudflare",
+        "CF-RAY": "7e0eccc609fa7692-LHR"
+    },
+    "data": "{\"tickets\":[{\"url\":\"https:\/\/codebarsolutionsag.zendesk.com\/api\/v2\/tickets\/79.json\",\"id\":79,\"external_id\":null,\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}},\"created_at\":\"2023-07-01T12:50:02Z\",\"updated_at\":\"2023-07-01T13:05:54Z\",\"type\":null,\"subject\":\"Eine neue Anfrage der B\u00e4rtschi ist eingetroffen: Projekt #1.\",\"raw_subject\":\"Eine neue Anfrage der B\u00e4rtschi ist eingetroffen: Projekt #1.\",\"description\":\"Eine neue Anfrage der B\u00e4rtschi ist eingetroffen.\\n\\nAnfrage\\nIdentifikation 1\\nBemerkung asdasd\\nURL https:\/\/app.pv.test\/nova\/resources\/inquiries\/1\\nErstellt am 01.07.2023 14:21 Uhr\\n**Kunde**\\nKunden B\u00e4rtschi\\nKunden ID 437046\\nBenutzer ID 437046_ralph\\nBenutzername Ralph Senn\\n**Konfiguration**\\nName Projekt #1\\nDachform Sattel-\/Pultdach\\nMontage Aufdach\\nHerkunft Asiatisch\\nWechselrichter Typ String\\n**Adresse**\\nStrasse M\u00fchlematten 12\\nPLZ 4455\\nOrt Zunzgen\\nLand CH\",\"priority\":\"urgent\",\"status\":\"open\",\"recipient\":null,\"requester_id\":17145664265741,\"submitter_id\":17145664265741,\"assignee_id\":17145664265741,\"organization_id\":17145651654157,\"group_id\":17145664762125,\"collaborator_ids\":[],\"follower_ids\":[],\"email_cc_ids\":[],\"forum_topic_id\":null,\"problem_id\":null,\"has_incidents\":false,\"is_public\":true,\"due_at\":null,\"tags\":[],\"custom_fields\":[{\"id\":17146061349901,\"value\":null},{\"id\":17195718961677,\"value\":null},{\"id\":17195752153741,\"value\":null}],\"satisfaction_rating\":null,\"sharing_agreement_ids\":[],\"custom_status_id\":17145678334989,\"fields\":[{\"id\":17146061349901,\"value\":null},{\"id\":17195718961677,\"value\":null},{\"id\":17195752153741,\"value\":null}],\"followup_ids\":[],\"ticket_form_id\":17145664563725,\"brand_id\":17145651602957,\"allow_channelback\":false,\"allow_attachments\":true,\"from_messaging_channel\":false},{\"url\":\"https:\/\/codebarsolutionsag.zendesk.com\/api\/v2\/tickets\/81.json\",\"id\":81,\"external_id\":null,\"via\":{\"channel\":\"api\",\"source\":{\"from\":{},\"to\":{},\"rel\":null}},\"created_at\":\"2023-07-03T11:16:03Z\",\"updated_at\":\"2023-07-03T11:16:05Z\",\"type\":null,\"subject\":\"My printer is on fire!\",\"raw_subject\":\"My printer is on fire!\",\"description\":\"The smoke is very colorful.\",\"priority\":\"urgent\",\"status\":\"open\",\"recipient\":null,\"requester_id\":17145664265741,\"submitter_id\":17145664265741,\"assignee_id\":17145664265741,\"organization_id\":17145651654157,\"group_id\":17145664762125,\"collaborator_ids\":[],\"follower_ids\":[],\"email_cc_ids\":[],\"forum_topic_id\":null,\"problem_id\":null,\"has_incidents\":false,\"is_public\":true,\"due_at\":null,\"tags\":[],\"custom_fields\":[{\"id\":17146061349901,\"value\":null},{\"id\":17195718961677,\"value\":\"Check field works\"},{\"id\":17195752153741,\"value\":\"Check field works number 2\"}],\"satisfaction_rating\":null,\"sharing_agreement_ids\":[],\"custom_status_id\":17145678334989,\"fields\":[{\"id\":17146061349901,\"value\":null},{\"id\":17195718961677,\"value\":\"Check field works\"},{\"id\":17195752153741,\"value\":\"Check field works number 2\"}],\"followup_ids\":[],\"ticket_form_id\":17145664563725,\"brand_id\":17145651602957,\"allow_channelback\":false,\"allow_attachments\":true,\"from_messaging_channel\":false}],\"next_page\":null,\"previous_page\":null,\"count\":2}"
+}

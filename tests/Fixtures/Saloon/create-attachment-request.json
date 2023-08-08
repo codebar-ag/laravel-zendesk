@@ -1,0 +1,40 @@
+{
+    "statusCode": 201,
+    "headers": {
+        "Date": "Mon, 03 Jul 2023 13:33:16 GMT",
+        "Content-Type": "application\/json; charset=utf-8",
+        "Content-Length": "2293",
+        "Connection": "keep-alive",
+        "x-zendesk-api-version": "v2",
+        "x-zendesk-application-version": "v17438",
+        "x-frame-options": "SAMEORIGIN",
+        "location": "https:\/\/codebarsolutionsag.zendesk.com\/api\/v2\/attachments\/17278923683597.json",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Zendesk-API-Warn,X-Zendesk-User-Id,X-Zendesk-User-Session-Expires-At",
+        "x-rate-limit": "400",
+        "rate-limit": "400",
+        "x-rate-limit-remaining": "399",
+        "rate-limit-remaining": "399",
+        "rate-limit-reset": "44",
+        "strict-transport-security": "max-age=31536000;",
+        "etag": "W\/\"387b535ca927c3e885bc4ebf45675c64\"",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "x-zendesk-origin-server": "classic-app-server-6fc8db697c-lbxfk",
+        "set-cookie": [
+            "_zendesk_cookie=BAhJIhl7ImRldmljZV90b2tlbnMiOnt9fQY6BkVU--0bf2100788cb010d0183feca16aaf88ccaf719ca; path=\/; expires=Wed, 03 Jul 2024 07:05:39 GMT; secure; HttpOnly; SameSite=None",
+            "__cfruid=9a71e3de0932ad74b42e7fcf2ed091e67ad18b84-1688391196; path=\/; domain=.codebarsolutionsag.zendesk.com; HttpOnly; Secure; SameSite=None"
+        ],
+        "x-request-id": [
+            "7e0f7fcbdbec7545-LHR",
+            "7e0f7fcbdbec7545-LHR"
+        ],
+        "x-runtime": "0.374089",
+        "X-Zendesk-Zorg": "yes",
+        "CF-Cache-Status": "DYNAMIC",
+        "Report-To": "{\"endpoints\":[{\"url\":\"https:\\\/\\\/a.nel.cloudflare.com\\\/report\\\/v3?s=TL6Q7BjsnUmgl8FO0vyKlypUJhEHM8ywbUzWFRH46niQLknkM8iDggX2mC7pWJJ8V8iBHBrGs0U8%2FGwAQEyClKMQMHTIDmcs%2Bl%2BlOH339vU0XQ%2FSAlPzIG1WkX6vs5k%2FCZCmES8PcDYJ0I44ZqeZIg%3D%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+        "NEL": "{\"success_fraction\":0.01,\"report_to\":\"cf-nel\",\"max_age\":604800}",
+        "Server": "cloudflare",
+        "CF-RAY": "7e0f7fcbdbec7545-LHR"
+    },
+    "data": "{\"upload\":{\"token\":\"OPvgMbfg5Der4DYn66hTC31in\",\"expires_at\":\"2023-07-06T13:33:15Z\",\"attachments\":[{\"url\":\"https:\/\/codebarsolutionsag.zendesk.com\/api\/v2\/attachments\/17278923683597.json\",\"id\":17278923683597,\"file_name\":\"test.png\",\"content_url\":\"https:\/\/codebarsolutionsag.zendesk.com\/attachments\/token\/52HCaRgRZM38MvaUuUQsYzhUA\/?name=test.png\",\"mapped_content_url\":\"https:\/\/codebarsolutionsag.zendesk.com\/attachments\/token\/52HCaRgRZM38MvaUuUQsYzhUA\/?name=test.png\",\"content_type\":\"image\/png\",\"size\":26271,\"width\":640,\"height\":360,\"inline\":false,\"deleted\":false,\"malware_access_override\":false,\"malware_scan_result\":\"not_scanned\",\"thumbnails\":[{\"url\":\"https:\/\/codebarsolutionsag.zendesk.com\/api\/v2\/attachments\/17278921757709.json\",\"id\":17278921757709,\"file_name\":\"test_thumb.png\",\"content_url\":\"https:\/\/codebarsolutionsag.zendesk.com\/attachments\/token\/gvLU5FyT7CoKakThdKaxHwVNg\/?name=test_thumb.png\",\"mapped_content_url\":\"https:\/\/codebarsolutionsag.zendesk.com\/attachments\/token\/gvLU5FyT7CoKakThdKaxHwVNg\/?name=test_thumb.png\",\"content_type\":\"image\/png\",\"size\":1823,\"width\":80,\"height\":45,\"inline\":false,\"deleted\":false,\"malware_access_override\":false,\"malware_scan_result\":\"not_scanned\"}]}],\"attachment\":{\"url\":\"https:\/\/codebarsolutionsag.zendesk.com\/api\/v2\/attachments\/17278923683597.json\",\"id\":17278923683597,\"file_name\":\"test.png\",\"content_url\":\"https:\/\/codebarsolutionsag.zendesk.com\/attachments\/token\/52HCaRgRZM38MvaUuUQsYzhUA\/?name=test.png\",\"mapped_content_url\":\"https:\/\/codebarsolutionsag.zendesk.com\/attachments\/token\/52HCaRgRZM38MvaUuUQsYzhUA\/?name=test.png\",\"content_type\":\"image\/png\",\"size\":26271,\"width\":640,\"height\":360,\"inline\":false,\"deleted\":false,\"malware_access_override\":false,\"malware_scan_result\":\"not_scanned\",\"thumbnails\":[{\"url\":\"https:\/\/codebarsolutionsag.zendesk.com\/api\/v2\/attachments\/17278921757709.json\",\"id\":17278921757709,\"file_name\":\"test_thumb.png\",\"content_url\":\"https:\/\/codebarsolutionsag.zendesk.com\/attachments\/token\/gvLU5FyT7CoKakThdKaxHwVNg\/?name=test_thumb.png\",\"mapped_content_url\":\"https:\/\/codebarsolutionsag.zendesk.com\/attachments\/token\/gvLU5FyT7CoKakThdKaxHwVNg\/?name=test_thumb.png\",\"content_type\":\"image\/png\",\"size\":1823,\"width\":80,\"height\":45,\"inline\":false,\"deleted\":false,\"malware_access_override\":false,\"malware_scan_result\":\"not_scanned\"}]}}}"
+}

@@ -2,6 +2,7 @@
 
 namespace CodebarAg\Zendesk\Dto\Tickets\Comments;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Data;
 
@@ -27,19 +28,19 @@ class CommentDTO extends Data
     public static function fromArray(array $data): self
     {
         return new self(
-            attachments: $data['attachments'] ?? null,
-            audit_id: $data['audit_id'] ?? null,
-            author_id: $data['author_id'] ?? null,
-            body: $data['body'] ?? null,
-            created_at: $data['created_at'] ?? null,
-            html_body: $data['html_body'] ?? null,
-            id: $data['id'] ?? null,
-            metadata: $data['metadata'] ?? null,
-            plain_body: $data['plain_body'] ?? null,
-            public: $data['public'] ?? null,
-            type: $data['type'] ?? null,
-            uploads: $data['uploads'] ?? null,
-            via: $data['via'] ?? null,
+            attachments: Arr::get($data, 'attachments'),
+            audit_id: Arr::get($data, 'audit_id'),
+            author_id: Arr::get($data, 'author_id'),
+            body: Arr::get($data, 'body'),
+            created_at: Arr::get($data, 'created_at'),
+            html_body: Arr::get($data, 'html_body'),
+            id: Arr::get($data, 'id'),
+            metadata: Arr::get($data, 'metadata'),
+            plain_body: Arr::get($data, 'plain_body'),
+            public: Arr::get($data, 'public'),
+            type: Arr::get($data, 'type'),
+            uploads: Arr::get($data, 'uploads'),
+            via: Arr::get($data, 'via'),
         );
     }
 }
