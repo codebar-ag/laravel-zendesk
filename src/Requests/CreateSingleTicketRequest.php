@@ -22,8 +22,20 @@ class CreateSingleTicketRequest extends Request implements HasBody
     }
 
     public function __construct(
-        readonly protected array|SingleTicketDTO $createTicket
+        readonly protected array|SingleTicketDTO $createTicket,
+        readonly protected null|string $onBehalfOf = null,
     ) {
+    }
+
+    protected function defaultHeaders(): array
+    {
+        $headers = [];
+
+        if ($this->onBehalfOf) {
+            $headers['X-On-Behalf-Of'] = $this->onBehalfOf;
+        }
+
+        return $headers;
     }
 
     protected function defaultBody(): array

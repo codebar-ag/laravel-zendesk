@@ -44,3 +44,45 @@ it('can get create a single ticket', closure: function () {
         ->and($response->dto()->custom_fields[2]['id'])->toBe(17195752153741)
         ->and($response->dto()->custom_fields[2]['value'])->toBe('Check field works number 2');
 });
+
+
+it('can get create a single ticket on behalf of a user', closure: function () {
+    $mockClient = new MockClient([
+        CreateSingleTicketRequest::class => MockResponse::fixture('create-single-ticket-request-on-behalf-of'),
+    ]);
+
+    $connector = new ZendeskConnector;
+    $connector->withMockClient($mockClient);
+
+    $response = $connector->send(new CreateSingleTicketRequest(
+        createTicket: [
+            'comment' => CommentDTO::fromArray([
+                'body' => 'The smoke is very colorful.',
+            ]),
+            'priority' => TicketPriority::URGENT,
+            'subject' => 'My printer is on fire!',
+            'custom_fields' => [
+                [
+                    'id' => 17195718961677,
+                    'value' => 'Check field works',
+                ],
+                [
+                    'id' => 17195752153741,
+                    'value' => 'Check field works number 2',
+                ],
+            ],
+        ],
+        onBehalfOf: 'test@example.com'
+    ));
+
+    $mockClient->assertSent(CreateSingleTicketRequest::class);
+
+    expect($response->dto()->subject)->toBe('My printer is on fire!')
+        ->and($response->dto()->raw_subject)->toBe('My printer is on fire!')
+        ->and($response->dto()->description)->toBe('The smoke is very colorful.')
+        ->and($response->dto()->priority)->toBe(TicketPriority::URGENT)
+        ->and($response->dto()->custom_fields[1]['id'])->toBe(17195718961677)
+        ->and($response->dto()->custom_fields[1]['value'])->toBe('Check field works')
+        ->and($response->dto()->custom_fields[2]['id'])->toBe(17195752153741)
+        ->and($response->dto()->custom_fields[2]['value'])->toBe('Check field works number 2');
+});
