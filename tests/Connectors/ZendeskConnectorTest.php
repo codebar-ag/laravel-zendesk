@@ -165,7 +165,6 @@ it('will compile the correct authentication string for basic method', function (
     expect($token)->toBe('test@example.com:test-password');
 });
 
-
 it('will throw and authentication error when details are incorrect', function () {
     config([
         'zendesk.subdomain' => 'codebarsolutionsagwrong',
