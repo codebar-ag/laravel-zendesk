@@ -10,14 +10,14 @@ use Saloon\Laravel\Http\Faking\MockClient;
 it('can show a user', closure: function () {
     $mockClient = new MockClient([
         SingleTicketRequest::class => MockResponse::fixture('single-ticket-request'),
-   ]);
+    ]);
 
     $connector = new ZendeskConnector;
     $connector->withMockClient($mockClient);
 
     $response = $connector->send(new ShowUserRequest(81));
 
-   $mockClient->assertSent(SingleTicketRequest::class);
+    $mockClient->assertSent(SingleTicketRequest::class);
 
     expect($response->dto()->id)->toBe(81)
         ->and($response->dto()->subject)->toBe('My printer is on fire!')

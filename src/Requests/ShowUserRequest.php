@@ -2,7 +2,6 @@
 
 namespace CodebarAg\Zendesk\Requests;
 
-use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
 use Exception;
 use Saloon\Contracts\Response;
 use Saloon\Enums\Method;

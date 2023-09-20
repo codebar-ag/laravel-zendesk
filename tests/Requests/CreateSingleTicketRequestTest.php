@@ -45,7 +45,6 @@ it('can get create a single ticket', closure: function () {
         ->and($response->dto()->custom_fields[2]['value'])->toBe('Check field works number 2');
 });
 
-
 it('can get create a single ticket on behalf of a user', closure: function () {
     $mockClient = new MockClient([
         CreateSingleTicketRequest::class => MockResponse::fixture('create-single-ticket-request-on-behalf-of'),
