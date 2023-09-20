@@ -12,7 +12,7 @@ uses()->beforeEach(function () {
 uses()->beforeAll(function () {
     if (is_dir('Fixtures/Saloon') && count(scandir('Fixtures/Saloon')) > 0) {
         config()->set('zendesk.subdomain', 'codebar-zendesk');
-        config()->set('zendesk.credentials.email', 'fake-email');
-        config()->set('zendesk.credentials.token', 'fake-token');
+        config()->set('zendesk.auth.email_address', 'fake-email');
+        config()->set('zendesk.auth.api_token', 'fake-token');
     }
 })->in(__DIR__);
