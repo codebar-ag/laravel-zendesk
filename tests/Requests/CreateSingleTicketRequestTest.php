@@ -23,11 +23,11 @@ it('can get create a single ticket', closure: function () {
         'subject' => 'My printer is on fire!',
         'custom_fields' => [
             [
-                'id' => 17195718961677,
+                'id' => 10350920893084,
                 'value' => 'Check field works',
             ],
             [
-                'id' => 17195752153741,
+                'id' => 10350942541980,
                 'value' => 'Check field works number 2',
             ],
         ],
@@ -39,8 +39,8 @@ it('can get create a single ticket', closure: function () {
         ->and($response->dto()->raw_subject)->toBe('My printer is on fire!')
         ->and($response->dto()->description)->toBe('The smoke is very colorful.')
         ->and($response->dto()->priority)->toBe(TicketPriority::URGENT)
-        ->and($response->dto()->custom_fields[1]['id'])->toBe(17195718961677)
+        ->and($response->dto()->custom_fields[1]['id'])->toBe(10350920893084)
         ->and($response->dto()->custom_fields[1]['value'])->toBe('Check field works')
-        ->and($response->dto()->custom_fields[2]['id'])->toBe(17195752153741)
+        ->and($response->dto()->custom_fields[2]['id'])->toBe(10350942541980)
         ->and($response->dto()->custom_fields[2]['value'])->toBe('Check field works number 2');
 });
