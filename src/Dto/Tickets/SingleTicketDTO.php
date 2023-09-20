@@ -73,7 +73,7 @@ class SingleTicketDTO extends Data
             throw new \Exception('Failed to get a single ticket', $response->status());
         }
 
-        $data = $response->json()['ticket'];
+        $data = Arr::get($response->json(), 'ticket');
 
         return self::fromArray($data);
     }

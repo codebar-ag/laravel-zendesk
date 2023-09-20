@@ -2,6 +2,7 @@
 
 namespace CodebarAg\Zendesk\Dto\Tickets;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
 use Spatie\LaravelData\Data;
@@ -20,11 +21,11 @@ class CountTicketsDTO extends Data
             throw new \Exception('Failed to get tickets count', $response->status());
         }
 
-        $data = $response->json()['count'];
+        $data = Arr::get($response->json(), 'count');
 
         return new self(
-            value: $data['value'],
-            refreshed_at: Carbon::parse($data['refreshed_at']),
+            value: Arr::get($data, 'value'),
+            refreshed_at: Carbon::parse(Arr::get($data, 'refreshed_at')),
         );
     }
 }
