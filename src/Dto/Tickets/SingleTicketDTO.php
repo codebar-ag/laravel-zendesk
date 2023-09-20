@@ -5,7 +5,6 @@ namespace CodebarAg\Zendesk\Dto\Tickets;
 use CodebarAg\Zendesk\Dto\Tickets\Comments\CommentDTO;
 use CodebarAg\Zendesk\Enums\TicketPriority;
 use CodebarAg\Zendesk\Enums\TicketType;
-use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
@@ -70,11 +69,11 @@ class SingleTicketDTO extends Data
 
     public static function fromResponse(Response $response): self
     {
-        $data = Arr::get($response->json(), 'ticket');
-
-        if (! $data) {
-            throw new Exception('Unable to create DTO. Data missing from response.');
+        if ($response->failed()) {
+            throw new \Exception('Failed to get a single ticket', $response->status());
         }
+
+        $data = Arr::get($response->json(), 'ticket');
 
         return self::fromArray($data);
     }

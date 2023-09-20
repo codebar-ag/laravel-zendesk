@@ -2,7 +2,6 @@
 
 namespace CodebarAg\Zendesk\Dto\Tickets;
 
-use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
@@ -18,15 +17,15 @@ class CountTicketsDTO extends Data
 
     public static function fromResponse(Response $response): self
     {
-        $data = Arr::get($response->json(), 'count');
-
-        if (! $data) {
-            throw new Exception('Unable to create DTO. Data missing from response.');
+        if ($response->failed()) {
+            throw new \Exception('Failed to get tickets count', $response->status());
         }
 
+        $data = Arr::get($response->json(), 'count');
+
         return new self(
-            value: $data['value'],
-            refreshed_at: Carbon::parse($data['refreshed_at']),
+            value: Arr::get($data, 'value'),
+            refreshed_at: Carbon::parse(Arr::get($data, 'refreshed_at')),
         );
     }
 }

@@ -23,11 +23,11 @@ it('can create an attachment', closure: function () {
 
     $mockClient->assertSent(CreateAttachmentRequest::class);
 
-    expect($response->dto()->token)->toBe('OPvgMbfg5Der4DYn66hTC31in')
+    expect($response->dto()->token)->toBe('cs0vflvMytl7PHs8XueOo5mty')
         ->and($response->dto()->attachment->content_type)->toBe('image/png')
         ->and($response->dto()->attachment->size)->toBe(26271)
         ->and($response->dto()->attachment->file_name)->toBe('test.png')
         ->and($response->dto()->attachment->width)->toBe('640')
         ->and($response->dto()->attachment->height)->toBe('360')
-        ->and($response->dto()->attachment->content_url)->toBe('https://codebarsolutionsag.zendesk.com/attachments/token/52HCaRgRZM38MvaUuUQsYzhUA/?name=test.png');
+        ->and($response->dto()->attachment->content_url)->toBe('https://codebarsolutions.zendesk.com/attachments/token/K32w31jO8UBB37UpKk2i1o4wg/?name=test.png');
 });

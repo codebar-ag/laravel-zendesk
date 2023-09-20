@@ -2,10 +2,12 @@
 
 use CodebarAg\Zendesk\Requests\SingleTicketRequest;
 use CodebarAg\Zendesk\ZendeskConnector;
+use Illuminate\Support\Facades\Config;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Http\Faking\MockClient;
 
 it('will throw an exception if a subdomain is not set', closure: function () {
+    Config::set('zendesk.subdomain');
     $connector = new ZendeskConnector;
     $connector->resolveBaseUrl();
 
@@ -164,7 +166,6 @@ it('will compile the correct authentication string for basic method', function (
 
     expect($token)->toBe('test@example.com:test-password');
 });
-
 
 it('will throw and authentication error when details are incorrect', function () {
     config([

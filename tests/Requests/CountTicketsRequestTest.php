@@ -18,5 +18,5 @@ it('can count all tickets', closure: function () {
     $mockClient->assertSent(CountTicketsRequest::class);
 
     expect($response->dto()->value)->toBe(4)
-        ->and($response->dto()->refreshed_at->toDateTimeString())->toBe('2023-07-03 13:19:53');
+        ->and($response->dto()->refreshed_at->toDateTimeString())->toBe('2023-09-20 22:08:07');
 });
