@@ -39,7 +39,7 @@ class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
-        if (is_dir(__DIR__ . '/Fixtures/Saloon/') && count(scandir(__DIR__ . '/Fixtures/Saloon')) > 0) {
+        if (is_dir(__DIR__.'/Fixtures/Saloon/') && count(scandir(__DIR__.'/Fixtures/Saloon')) > 0) {
             $app['config']->set('zendesk.subdomain', 'codebar-zendesk');
             $app['config']->set('zendesk.auth.email_address', 'fake-email');
             $app['config']->set('zendesk.auth.api_token', 'fake-token');
