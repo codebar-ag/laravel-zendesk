@@ -1,6 +1,13 @@
 name: PHPStan
 
 on:
+<<<<<<< HEAD
+=======
+  pull_request:
+    paths:
+      - '**.php'
+      - 'phpstan.neon.dist'
+>>>>>>> 67aa803fa405c790afcc1f34b4afa5957b827114
   push:
     branches: [ main ]
   pull_request:
