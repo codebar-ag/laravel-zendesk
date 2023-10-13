@@ -4,7 +4,7 @@ namespace CodebarAg\Zendesk\Requests;
 
 use CodebarAg\Zendesk\Dto\Tickets\CountTicketsDTO;
 use Exception;
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 

@@ -5,7 +5,7 @@ namespace CodebarAg\Zendesk\Requests;
 use CodebarAg\Zendesk\Dto\Tickets\Attachments\UploadDTO;
 use Exception;
 use Saloon\Contracts\Body\HasBody;
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Traits\Body\HasStreamBody;
