@@ -4,9 +4,9 @@ namespace CodebarAg\Zendesk\Requests;
 
 use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
 use Exception;
-use Saloon\Http\Response;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+use Saloon\Http\Response;
 
 class SingleTicketRequest extends Request
 {

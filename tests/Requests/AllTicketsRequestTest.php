@@ -16,8 +16,6 @@ it('can get all tickets', closure: function () {
 
     $response = $connector->send(new AllTicketsRequest());
 
-    ray($response->dto());
-
     $mockClient->assertSent(AllTicketsRequest::class);
 
     expect($response->dto()->count)->toBe(6)

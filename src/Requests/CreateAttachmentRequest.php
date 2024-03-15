@@ -5,9 +5,9 @@ namespace CodebarAg\Zendesk\Requests;
 use CodebarAg\Zendesk\Dto\Tickets\Attachments\UploadDTO;
 use Exception;
 use Saloon\Contracts\Body\HasBody;
-use Saloon\Http\Response;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+use Saloon\Http\Response;
 use Saloon\Traits\Body\HasStreamBody;
 
 class CreateAttachmentRequest extends Request implements HasBody
