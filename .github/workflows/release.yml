@@ -10,6 +10,12 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+
+    env:
+      INITIAL_VERSION: 11.0.0
+      RELEASE_BRANCHES: main
+      DEFAULT_BUMP: patch
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,6 +25,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           WITH_V: true
-          INITIAL_VERSION: 11.0.0
-          RELEASE_BRANCHES: main
-          DEFAULT_BUMP: patch
+          INITIAL_VERSION: ${{ env.INITIAL_VERSION }}
+          RELEASE_BRANCHES: ${{ env.RELEASE_BRANCHES }}
+          DEFAULT_BUMP: ${{ env.DEFAULT_BUMP }}
