@@ -1,85 +1,85 @@
 {
-    "name": "codebar-ag/laravel-zendesk",
-    "description": "Zendesk integration with Laravel",
-    "keywords": [
-        "zendesk",
-        "laravel",
-        "codebar-ag",
-        "laravel-zendesk"
-    ],
-    "homepage": "https://github.com/codebar-ag/laravel-zendesk",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Sebastian Fix",
-            "email": "sebastian.fix@codebar.ch",
-            "homepage": "https://www.codebar.ch",
-            "role": "Developer"
-        },
-        {
-            "name": "Rhys Lees",
-            "role": "Software-Developer"
-        }
-    ],
-    "require": {
-        "php": "^8.3",
-        "guzzlehttp/guzzle": "^7.8",
-        "illuminate/contracts": "^11.0",
-        "laravel/framework": "^11.0",
-        "orchestra/testbench": "^8.20",
-        "saloonphp/cache-plugin": "^3.0",
-        "saloonphp/laravel-plugin": "^3.2",
-        "saloonphp/saloon": "^3.4",
-        "spatie/laravel-data": "^3.11",
-        "spatie/laravel-package-tools": "^1.16"
+  "name": "codebar-ag/laravel-zendesk",
+  "description": "Zendesk integration with Laravel",
+  "keywords": [
+    "zendesk",
+    "laravel",
+    "codebar-ag",
+    "laravel-zendesk"
+  ],
+  "homepage": "https://github.com/codebar-ag/laravel-zendesk",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Sebastian Bürgi ",
+      "email": "sebastian.buergin@codebar.ch",
+      "homepage": "https://www.codebar.ch",
+      "role": "Developer"
     },
-    "require-dev": {
-        "laravel/pint": "^1.13",
-        "nunomaduro/collision": "^7.10",
-        "nunomaduro/larastan": "^2.8",
-        "orchestra/testbench": "^8.20",
-        "pestphp/pest": "^2.31",
-        "pestphp/pest-plugin-laravel": "^2.2",
-        "phpstan/extension-installer": "^1.3",
-        "phpstan/phpstan-deprecation-rules": "^1.1",
-        "phpstan/phpstan-phpunit": "^1.3",
-        "spatie/laravel-ray": "^1.33"
-    },
-    "autoload": {
-        "psr-4": {
-            "CodebarAg\\Zendesk\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "CodebarAg\\Zendesk\\Tests\\": "tests"
-        }
-    },
-    "scripts": {
-        "analyse": "vendor/bin/phpstan analyse",
-        "test": "vendor/bin/pest",
-        "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
-    },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "composer/package-versions-deprecated": false,
-            "pestphp/pest-plugin": true,
-            "phpstan/extension-installer": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "CodebarAg\\Zendesk\\ZendeskServiceProvider"
-            ],
-            "aliases": {
-                "Flatfox": "CodebarAg\\Zendesk\\Facades\\Zendesk"
-            }
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    {
+      "name": "Rhys Lees",
+      "role": "Software-Developer"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "guzzlehttp/guzzle": "^7.8",
+    "illuminate/contracts": "^11.0",
+    "laravel/framework": "^11.0",
+    "saloonphp/cache-plugin": "^3.0",
+    "saloonphp/laravel-plugin": "^3.2",
+    "saloonphp/saloon": "^3.4",
+    "spatie/laravel-data": "^4.4.0",
+    "spatie/laravel-package-tools": "^1.16"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.14",
+    "nunomaduro/collision": "^8.1",
+    "nunomaduro/larastan": "^2.8",
+    "orchestra/testbench": "^9.0",
+    "pestphp/pest": "^2.34",
+    "pestphp/pest-plugin-laravel": "^2.3",
+    "phpstan/extension-installer": "^1.3",
+    "phpstan/phpstan-deprecation-rules": "^1.1",
+    "phpstan/phpstan-phpunit": "^1.3",
+    "pestphp/pest-plugin-arch": "^2.7",
+    "spatie/laravel-ray": "^1.35"
+  },
+  "autoload": {
+    "psr-4": {
+      "CodebarAg\\Zendesk\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "CodebarAg\\Zendesk\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "analyse": "vendor/bin/phpstan analyse",
+    "test": "vendor/bin/pest",
+    "test-coverage": "vendor/bin/pest --coverage",
+    "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "composer/package-versions-deprecated": false,
+      "pestphp/pest-plugin": true,
+      "phpstan/extension-installer": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "CodebarAg\\Zendesk\\ZendeskServiceProvider"
+      ],
+      "aliases": {
+        "Flatfox": "CodebarAg\\Zendesk\\Facades\\Zendesk"
+      }
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
