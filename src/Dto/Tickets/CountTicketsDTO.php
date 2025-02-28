@@ -12,8 +12,7 @@ class CountTicketsDTO extends Data
     public function __construct(
         public ?int $value,
         public ?Carbon $refreshed_at,
-    ) {
-    }
+    ) {}
 
     public static function fromResponse(Response $response): self
     {

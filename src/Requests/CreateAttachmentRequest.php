@@ -25,8 +25,7 @@ class CreateAttachmentRequest extends Request implements HasBody
         protected string $fileName,
         protected string $mimeType,
         protected mixed $stream,
-    ) {
-    }
+    ) {}
 
     protected function defaultHeaders(): array
     {

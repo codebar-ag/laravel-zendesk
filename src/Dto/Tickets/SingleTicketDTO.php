@@ -64,8 +64,7 @@ class SingleTicketDTO extends Data
         public ?int $via_followup_source_id,
         public ?int $via_id,
         public ?array $voice_comment,
-    ) {
-    }
+    ) {}
 
     public static function fromResponse(Response $response): self
     {

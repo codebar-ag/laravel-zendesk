@@ -14,7 +14,7 @@ it('can get all tickets', closure: function () {
     $connector = new ZendeskConnector;
     $connector->withMockClient($mockClient);
 
-    $response = $connector->send(new AllTicketsRequest());
+    $response = $connector->send(new AllTicketsRequest);
 
     $mockClient->assertSent(AllTicketsRequest::class);
 
@@ -23,7 +23,7 @@ it('can get all tickets', closure: function () {
         ->and($response->dto()->tickets[0]['subject'])->toBe('My printer is on fire!')
         ->and($response->dto()->tickets[0]['raw_subject'])->toBe('My printer is on fire!')
         ->and($response->dto()->tickets[0]['description'])->toBe('The smoke is very colorful.')
-        ->and($response->dto()->tickets[0]['priority'])->toBe(TicketPriority::URGENT)
+        ->and($response->dto()->tickets[0]['priority'])->toBe(TicketPriority::URGENT->value)
         ->and($response->dto()->tickets[0]['custom_fields'][1]['id'])->toBe(10350920893084)
         ->and($response->dto()->tickets[0]['custom_fields'][1]['value'])->toBe('Check field works')
         ->and($response->dto()->tickets[0]['custom_fields'][2]['id'])->toBe(10350942541980)

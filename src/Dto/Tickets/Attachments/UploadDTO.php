@@ -14,8 +14,7 @@ class UploadDTO extends Data
         public Carbon $expires_at,
         public array $attachments,
         public AttachmentDTO $attachment,
-    ) {
-    }
+    ) {}
 
     public static function fromResponse(Response $response): self
     {
