@@ -1,9 +1,9 @@
-<img src="https://banners.beyondco.de/Laravel%20Zendesk.png?theme=light&packageManager=composer+require&packageName=codebar-ag%2Flaravel-zendesk&pattern=circuitBoard&style=style_2&description=A+Laravel+Zendesk+integration.&md=1&showWatermark=1&fontSize=150px&images=home&widths=500&heights=500">
+<img src="https://banners.beyondco.de/Laravel%20Zendesk.png?theme=light&packageManager=composer+require&packageName=codebar-ag%2Flaravel-zendesk&pattern=circuitBoard&style=style_2&description=A+Laravel+Zendesk+integration.&md=1&showWatermark=0&fontSize=150px&images=home&widths=500&heights=500">
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/codebar-ag/laravel-zendesk.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-zendesk)
+[![GitHub-Tests](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/run-tests.yml)
+[![GitHub Code Style](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/fix-php-code-style-issues.yml/badge.svg?branch=main)](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/fix-php-code-style-issues.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/codebar-ag/laravel-zendesk.svg?style=flat-square)](https://packagist.org/packages/codebar-ag/laravel-zendesk)
-[![run-tests](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/run-tests.yml/badge.svg)](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/run-tests.yml)
-[![PHPStan](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/phpstan.yml/badge.svg)](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/phpstan.yml)
 
 This package was developed to give you a quick start to creating tickets via the Zendesk API.
 
@@ -14,9 +14,12 @@ knowledge base and online communities.
 
 ## 🛠 Requirements
 
-| Package 	 | PHP 	 | Laravel 	      | Zendesk 	 |
-|-----------|-------|----------------|:---------:|
-| >v1.0     | >8.2  | > Laravel 10.0 |     ✅     |
+| Package 	 | PHP 	       | Laravel 	 | Zendesk 	 |
+|-----------|-------------|-----------|:---------:|
+| v12.0     | ^8.2 - ^8.4 | 12.x      |     ✅     |
+| v11.0     | ^8.2 - ^8.3 | 11.x      |     ✅     |
+| v1.0      | ^8.2        | 10.x      |     ✅     |
+
 
 ## Authentication
 
