@@ -22,8 +22,7 @@ class CommentDTO extends Data
         public ?string $type,
         public ?array $uploads,
         public ?array $via,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

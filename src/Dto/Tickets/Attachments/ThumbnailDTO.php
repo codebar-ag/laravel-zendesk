@@ -22,8 +22,7 @@ class ThumbnailDTO extends Data
         public ?int $size,
         public ?string $url,
         public ?string $width,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

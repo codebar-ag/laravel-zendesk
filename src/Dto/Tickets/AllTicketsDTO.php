@@ -14,8 +14,7 @@ class AllTicketsDTO extends Data
         public int $count,
         public ?string $next_page_url,
         public ?string $previous_page_url,
-    ) {
-    }
+    ) {}
 
     public static function fromResponse(Response $response): self
     {

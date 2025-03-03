@@ -5,6 +5,7 @@ namespace CodebarAg\Zendesk\Tests;
 use CodebarAg\Zendesk\ZendeskServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Spatie\LaravelData\LaravelDataServiceProvider;
 use Spatie\LaravelData\Support\DataConfig;
 
 class TestCase extends Orchestra
@@ -27,6 +28,7 @@ class TestCase extends Orchestra
     {
         return [
             ZendeskServiceProvider::class,
+            LaravelDataServiceProvider::class,
         ];
     }
 

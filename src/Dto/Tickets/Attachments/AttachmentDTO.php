@@ -23,8 +23,7 @@ class AttachmentDTO extends Data
         public ?array $thumbnails,
         public ?string $url,
         public ?string $width,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

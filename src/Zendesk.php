@@ -2,6 +2,4 @@
 
 namespace CodebarAg\Zendesk;
 
-class Zendesk
-{
-}
+class Zendesk {}

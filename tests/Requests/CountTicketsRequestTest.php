@@ -13,7 +13,7 @@ it('can count all tickets', closure: function () {
     $connector = new ZendeskConnector;
     $connector->withMockClient($mockClient);
 
-    $response = $connector->send(new CountTicketsRequest());
+    $response = $connector->send(new CountTicketsRequest);
 
     $mockClient->assertSent(CountTicketsRequest::class);
 

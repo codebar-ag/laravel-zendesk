@@ -5,9 +5,9 @@ namespace CodebarAg\Zendesk\Requests;
 use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
 use Exception;
 use Saloon\Contracts\Body\HasBody;
-use Saloon\Http\Response;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+use Saloon\Http\Response;
 use Saloon\Traits\Body\HasJsonBody;
 
 class CreateSingleTicketRequest extends Request implements HasBody
@@ -23,8 +23,7 @@ class CreateSingleTicketRequest extends Request implements HasBody
 
     public function __construct(
         readonly protected array|SingleTicketDTO $createTicket
-    ) {
-    }
+    ) {}
 
     protected function defaultBody(): array
     {
