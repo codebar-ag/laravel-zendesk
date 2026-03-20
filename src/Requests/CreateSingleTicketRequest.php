@@ -22,7 +22,7 @@ class CreateSingleTicketRequest extends Request implements HasBody
     }
 
     public function __construct(
-        readonly protected array|SingleTicketDTO $createTicket
+        protected readonly array|SingleTicketDTO $createTicket
     ) {}
 
     protected function defaultBody(): array
