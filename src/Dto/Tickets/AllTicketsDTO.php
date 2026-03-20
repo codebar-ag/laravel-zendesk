@@ -19,7 +19,7 @@ class AllTicketsDTO extends Data
     public static function fromResponse(Response $response): self
     {
         if ($response->failed()) {
-            throw new \Exception('Failed to get all tickets', $response->status());
+            throw new Exception('Failed to get all tickets', $response->status());
         }
 
         $data = $response->json();
