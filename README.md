@@ -72,31 +72,31 @@ use CodebarAg\Zendesk\ZendeskConnector;
 ...
 
 $connector = new ZendeskConnector();
-````
+```
 
 ### Requests
 
 The following requests are currently supported:
 
-| Request 	         | Supported 	 |
-|-------------------|:-----------:|
-| List Tickets      |      ✅      |
-| Count Tickets     |      ✅      |
-| Show Ticket       |      ✅      |
-| Create Ticket     |      ✅      |
-| Create Attachment |      ✅      |
+| Request            | PHP class                    | Supported |
+|--------------------|------------------------------|:---------:|
+| List tickets       | `AllTicketsRequest`          |     ✅     |
+| Count tickets      | `CountTicketsRequest`        |     ✅     |
+| Get ticket         | `SingleTicketRequest`        |     ✅     |
+| Create ticket      | `CreateSingleTicketRequest`  |     ✅     |
+| Create attachment  | `CreateAttachmentRequest`    |     ✅     |
 
 ### Responses
 
 The following responses are currently supported for retrieving the response body:
 
-| Response Methods	 | Description                                                                                                                        | Supported 	 |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------|:-----------:|
-| body              | Returns the HTTP body as a string                                                                                                  |      ✅      |
-| json              | Retrieves a JSON response body and json_decodes it into an array.                                                                  |      ✅      |
-| object            | Retrieves a JSON response body and json_decodes it into an object.                                                                 |      ✅      |
-| collect           | Retrieves a JSON response body and json_decodes it into a Laravel collection. **Requires illuminate/collections to be installed.** |      ✅      |
-| dto               | Converts the response into a data-transfer object. You must define your DTO first                                                  |      ✅      |
+| Response Methods | Description                                                                                                                        | Supported |
+|------------------|------------------------------------------------------------------------------------------------------------------------------------|:---------:|
+| body             | Returns the HTTP body as a string                                                                                                  |     ✅     |
+| json             | Retrieves a JSON response body and json_decodes it into an array.                                                                  |     ✅     |
+| object           | Retrieves a JSON response body and json_decodes it into an object.                                                                 |     ✅     |
+| collect          | Retrieves a JSON response body and json_decodes it into a Laravel collection. **Requires illuminate/collections to be installed.** |     ✅     |
+| dto              | Converts the response into a DTO. This package provides DTOs for the requests above; Saloon also allows custom DTOs.                 |     ✅     |
 
 See https://docs.saloon.dev/the-basics/responses for more information.
 
@@ -112,21 +112,25 @@ We provide enums for the following values:
 
 `Note: When using the dto method on a response, the enum values will be converted to their respective enum class.`
 
+### Zendesk API and DTO coverage
+
+Official ticket JSON is documented in the [Zendesk Tickets API](https://developer.zendesk.com/api-reference/ticketing/tickets/tickets/). [`SingleTicketDTO`](src/Dto/Tickets/SingleTicketDTO.php) maps a large subset of fields returned by Zendesk; it is not guaranteed to include every property the API may return. For example, the docs show `custom_status_id` and `generated_timestamp` on ticket objects; those keys are not mapped on `SingleTicketDTO` today.
+
 ### DTOs
 
 We provide DTOs for the following:
 
-| DTO 	           |
-|-----------------|
-| AttachmentDTO   |
-| ThumbnailDTO    |
-| UploadDTO       |
-| CommentDTO      |
-| AllTicketsDTO   |
-| CountTicketsDTO |
-| SingleTicketDTO |
+| DTO               | PHP class |
+|-------------------|-----------|
+| AttachmentDTO     | `CodebarAg\Zendesk\Dto\Tickets\Attachments\AttachmentDTO` |
+| ThumbnailDTO      | `CodebarAg\Zendesk\Dto\Tickets\Attachments\ThumbnailDTO` |
+| UploadDTO         | `CodebarAg\Zendesk\Dto\Tickets\Attachments\UploadDTO` |
+| CommentDTO        | `CodebarAg\Zendesk\Dto\Tickets\Comments\CommentDTO` |
+| AllTicketsDTO     | `CodebarAg\Zendesk\Dto\Tickets\AllTicketsDTO` |
+| CountTicketsDTO   | `CodebarAg\Zendesk\Dto\Tickets\CountTicketsDTO` |
+| SingleTicketDTO   | `CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO` |
 
-`Note: This is the prefered method of interfacing with Requests and Responses however you can still use the json, object and collect methods. and pass arrays to the requests.`
+`Note: This is the preferred way to work with requests and responses. You can still use the json, object, and collect methods, and pass arrays into requests where supported.`
 
 ### Examples
 
@@ -134,8 +138,8 @@ We provide DTOs for the following:
 
 ```php
 use CodebarAg\Zendesk\Requests\CreateSingleTicketRequest;
-use CodebarAg\Zendesk\DTOs\SingleTicketDTO;
-use CodebarAg\Zendesk\DTOs\CommentDTO;
+use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
+use CodebarAg\Zendesk\Dto\Tickets\Comments\CommentDTO;
 use CodebarAg\Zendesk\Enums\TicketPriority;
 ...
 
@@ -162,7 +166,7 @@ $ticketResponse = $connector->send(
 );
 
 $ticket = $ticketResponse->dto();
-````
+```
 
 #### List all tickets
 
@@ -172,7 +176,7 @@ use CodebarAg\Zendesk\Requests\AllTicketsRequest;
 
 $listTicketResponse = $connector->send(new AllTicketsRequest());
 $listTicketResponse->dto();
-````
+```
 
 #### Count all tickets
 
@@ -182,25 +186,27 @@ use CodebarAg\Zendesk\Requests\CountTicketsRequest;
 
 $countTicketResponse = $connector->send(new CountTicketsRequest());
 $countTicketResponse->dto();
-````
+```
 
-#### Show a ticket
+#### Get a ticket
 
 ```php
-use CodebarAg\Zendesk\Requests\ShowTicketRequest;
+use CodebarAg\Zendesk\Requests\SingleTicketRequest;
 ...
 
-$ticketID = 1;
+$ticketId = 1;
 
-$showTicketResponse = $connector->send(new ShowTicketRequest($ticketID));
-$showTicketResponse->dto();
-````
+$ticketResponse = $connector->send(new SingleTicketRequest($ticketId));
+$ticketResponse->dto();
+```
 
 #### Upload an attachment
 
 ```php
 use CodebarAg\Zendesk\Requests\CreateAttachmentRequest;
 use CodebarAg\Zendesk\Requests\CreateSingleTicketRequest;
+use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
+use CodebarAg\Zendesk\Dto\Tickets\Comments\CommentDTO;
 use Illuminate\Support\Facades\Storage;
 
 $uploadResponse = $connector->send(
