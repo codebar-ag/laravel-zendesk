@@ -16,5 +16,11 @@ jobs:
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v6.0.2
+      # Node 24 for job toolchain; dependency-review-action@v4 still runs on Node 20 internally until upstream bumps runs.using.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          check-latest: true
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@v4.9.0
