@@ -19,8 +19,8 @@ jobs:
           php-version: '8.5'
           coverage: none
 
-      - name: Install composer dependencies
-        uses: ramsey/composer-install@4.0.0
+      - name: Install Composer dependencies
+        run: composer update --no-interaction --prefer-dist --no-ansi
 
       - name: Run Laravel Pint
         run: vendor/bin/pint
