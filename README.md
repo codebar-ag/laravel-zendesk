@@ -18,6 +18,7 @@ knowledge base and online communities.
 
 | Package 	 | PHP 	       | Laravel 	 | Zendesk 	 |
 |-----------|-------------|-----------|:---------:|
+| v13.0     | ^8.3 - ^8.5 | 13.x      |     ✅     |
 | v12.0     | ^8.2 - ^8.4 | 12.x      |     ✅     |
 | v11.0     | ^8.2 - ^8.3 | 11.x      |     ✅     |
 | v1.0      | ^8.2        | 10.x      |     ✅     |
@@ -265,8 +266,7 @@ composer test
 Please review [our security policy](.github/SECURITY.md) on reporting security vulnerabilities.
 
 ## 🙏 Credits
-- [Rhys Lees](https://github.com/RhysLees)
-- [Sebastian Fix](https://github.com/StanBarrows)
+- [Sebastian Bürgin-Fix](https://github.com/StanBarrows)
 - [All Contributors](../../contributors)
 - [Skeleton Repository from Spatie](https://github.com/spatie/package-skeleton-laravel)
 - [Laravel Package Training from Spatie](https://spatie.be/videos/laravel-package-training)
