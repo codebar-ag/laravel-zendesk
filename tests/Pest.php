@@ -1,9 +1,11 @@
 <?php
 
 use CodebarAg\Zendesk\Requests\OAuth\CreateAccessTokenRequest;
+use CodebarAg\Zendesk\Tests\Fixtures\ZendeskFixture;
 use CodebarAg\Zendesk\Tests\TestCase;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
+use Saloon\Laravel\Facades\Saloon;
 
 uses(TestCase::class)->in(__DIR__);
 
@@ -29,7 +31,40 @@ function tokenResponse(array $overrides = [], int $status = 200): MockResponse
  */
 function fakeZendesk(array $responses = []): MockClient
 {
-    return MockClient::global(array_merge([
+    return Saloon::fake(array_merge([
         CreateAccessTokenRequest::class => tokenResponse(),
     ], $responses));
+}
+
+function zendeskFixture(string $name): ZendeskFixture
+{
+    return new ZendeskFixture($name);
+}
+
+/**
+ * Fakes requests with recorded live responses, including the OAuth token request.
+ *
+ * @param  array<class-string, mixed>  $responses
+ */
+function fakeZendeskLive(array $responses = []): MockClient
+{
+    return Saloon::fake(array_merge([
+        CreateAccessTokenRequest::class => zendeskFixture('oauth/token'),
+    ], $responses));
+}
+
+/**
+ * Live tests replay their fixtures. They are skipped until the fixtures were recorded with `composer test:record`.
+ */
+function requiresFixtures(string ...$names): void
+{
+    if (ZendeskFixture::recording()) {
+        return;
+    }
+
+    foreach ($names as $name) {
+        if (! ZendeskFixture::exists($name)) {
+            test()->markTestSkipped("Fixture [{$name}] is missing. Record it with `composer test:record`.");
+        }
+    }
 }

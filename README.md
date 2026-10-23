@@ -318,13 +318,39 @@ $ticket = $ticketResponse->dto();
 
 ## 🚧 Testing
 
-The test suite never calls the real Zendesk API. Stray requests are blocked and all responses are mocked with Saloon.
+The test suite never calls the real Zendesk API on a normal run. Stray requests are blocked, and every response is mocked.
 
 ```bash
 cp phpunit.xml.dist phpunit.xml
 composer test
 composer analyse
 ```
+
+### Live tests with recorded fixtures
+
+The tests in `tests/Live` run against **real Zendesk responses** that were recorded with Saloon fixtures (`tests/Fixtures/Saloon`). On a normal run they replay those fixtures offline. If a fixture is missing, its test is skipped.
+
+To record or refresh the fixtures against your Zendesk account:
+
+1. Create a confidential OAuth client with `read write` scope. Use a **sandbox or test account**.
+2. Put the credentials in your local, git-ignored `phpunit.xml`:
+   ```xml
+   <env name="ZENDESK_SUBDOMAIN" value="your-subdomain"/>
+   <env name="ZENDESK_OAUTH_CLIENT_ID" value="your-client-id"/>
+   <env name="ZENDESK_OAUTH_CLIENT_SECRET" value="your-client-secret"/>
+   ```
+3. Run:
+   ```bash
+   composer test:record
+   ```
+
+Record mode sends every live test request to Zendesk and overwrites the fixtures. Before saving, [`ZendeskFixture`](tests/Fixtures/ZendeskFixture.php) redacts:
+- access and refresh tokens
+- email addresses, names and phone numbers
+- cookies and tracing headers
+- your subdomain, which is replaced with `codebar-zendesk`
+
+Review the diff before committing the fixtures. Recording creates test tickets tagged `laravel-zendesk-test`, which you can bulk-delete in Zendesk.
 
 ### Testing your own app
 

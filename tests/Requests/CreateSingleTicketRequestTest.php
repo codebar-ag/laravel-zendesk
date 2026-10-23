@@ -9,6 +9,22 @@ use CodebarAg\Zendesk\ZendeskConnector;
 use Saloon\Exceptions\Request\Statuses\UnprocessableEntityException;
 use Saloon\Http\Faking\MockResponse;
 
+function createdResponse(): MockResponse
+{
+    return MockResponse::make([
+        'ticket' => [
+            'id' => 26,
+            'subject' => 'My printer is on fire!',
+            'raw_subject' => 'My printer is on fire!',
+            'description' => 'The smoke is very colorful.',
+            'priority' => 'urgent',
+            'custom_fields' => [
+                ['id' => 10350920893084, 'value' => 'Check field works'],
+            ],
+        ],
+    ], 201);
+}
+
 $ticket = fn (): array => [
     'comment' => CommentDTO::fromArray([
         'body' => 'The smoke is very colorful.',
@@ -23,7 +39,7 @@ $ticket = fn (): array => [
 
 it('can create a single ticket', function () use ($ticket) {
     $mockClient = fakeZendesk([
-        CreateSingleTicketRequest::class => MockResponse::fixture('create-single-ticket-request'),
+        CreateSingleTicketRequest::class => createdResponse(),
     ]);
 
     $response = new ZendeskConnector()->send(new CreateSingleTicketRequest($ticket()));
@@ -42,15 +58,13 @@ it('can create a single ticket', function () use ($ticket) {
         ->and($dto->raw_subject)->toBe('My printer is on fire!')
         ->and($dto->description)->toBe('The smoke is very colorful.')
         ->and($dto->priority)->toBe(TicketPriority::URGENT)
-        ->and($dto->custom_fields[1]['id'])->toBe(10350920893084)
-        ->and($dto->custom_fields[1]['value'])->toBe('Check field works')
-        ->and($dto->custom_fields[2]['id'])->toBe(10350942541980)
-        ->and($dto->custom_fields[2]['value'])->toBe('Check field works number 2');
+        ->and($dto->custom_fields[0]['id'])->toBe(10350920893084)
+        ->and($dto->custom_fields[0]['value'])->toBe('Check field works');
 });
 
 it('only sends the attributes that were set', function () use ($ticket) {
     $mockClient = fakeZendesk([
-        CreateSingleTicketRequest::class => MockResponse::fixture('create-single-ticket-request'),
+        CreateSingleTicketRequest::class => createdResponse(),
     ]);
 
     new ZendeskConnector()->send(new CreateSingleTicketRequest($ticket()));
@@ -70,7 +84,7 @@ it('only sends the attributes that were set', function () use ($ticket) {
 
 it('accepts a dto and serializes enums, comments and uploads', function () {
     $mockClient = fakeZendesk([
-        CreateSingleTicketRequest::class => MockResponse::fixture('create-single-ticket-request'),
+        CreateSingleTicketRequest::class => createdResponse(),
     ]);
 
     new ZendeskConnector()->send(new CreateSingleTicketRequest(SingleTicketDTO::fromArray([
@@ -100,7 +114,7 @@ it('accepts a dto and serializes enums, comments and uploads', function () {
 
 it('keeps null values inside custom fields', function () {
     $mockClient = fakeZendesk([
-        CreateSingleTicketRequest::class => MockResponse::fixture('create-single-ticket-request'),
+        CreateSingleTicketRequest::class => createdResponse(),
     ]);
 
     new ZendeskConnector()->send(new CreateSingleTicketRequest([

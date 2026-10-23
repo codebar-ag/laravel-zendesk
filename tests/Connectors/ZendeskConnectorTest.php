@@ -14,6 +14,11 @@ use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Http\PendingRequest;
 
+function countResponse(): MockResponse
+{
+    return MockResponse::make(['count' => ['value' => 4, 'refreshed_at' => '2026-10-23T12:00:00+00:00']]);
+}
+
 describe('base url', function () {
     it('resolves the base url from the config', function () {
         expect(new ZendeskConnector()->resolveBaseUrl())->toBe('https://codebar-zendesk.zendesk.com/api/v2');
@@ -88,7 +93,7 @@ describe('authentication method', function () {
 describe('oauth', function () {
     it('sends requests with an oauth bearer token', function () {
         $mockClient = fakeZendesk([
-            CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+            CountTicketsRequest::class => countResponse(),
         ]);
 
         new ZendeskConnector()->send(new CountTicketsRequest);
@@ -99,7 +104,7 @@ describe('oauth', function () {
 
     it('reuses the cached token across connectors', function () {
         $mockClient = fakeZendesk([
-            CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+            CountTicketsRequest::class => countResponse(),
         ]);
 
         new ZendeskConnector()->send(new CountTicketsRequest);
@@ -114,7 +119,7 @@ describe('oauth', function () {
             CreateAccessTokenRequest::class => fn (PendingRequest $request) => tokenResponse([
                 'access_token' => $request->body()->all()['client_id'].'@'.parse_url($request->getUrl(), PHP_URL_HOST),
             ]),
-            CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+            CountTicketsRequest::class => countResponse(),
         ]);
 
         new ZendeskConnector('acme', new OAuthCredentials('acme-client', 'acme-secret'))->send(new CountTicketsRequest);
@@ -158,7 +163,7 @@ describe('oauth', function () {
                 $requests++;
 
                 return $request->headers()->get('Authorization') === 'Bearer token-2'
-                    ? MockResponse::fixture('count-tickets-request')
+                    ? countResponse()
                     : MockResponse::make(['error' => 'invalid_token'], 401);
             },
         ]);
@@ -203,7 +208,7 @@ describe('access token', function () {
 
     it('sends requests with the configured bearer token', function () {
         $mockClient = fakeZendesk([
-            CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+            CountTicketsRequest::class => countResponse(),
         ]);
 
         new ZendeskConnector()->send(new CountTicketsRequest);
@@ -250,7 +255,7 @@ describe('custom authenticator', function () {
 describe('headers', function () {
     it('accepts json and does not force a content type on requests without a body', function () {
         $mockClient = fakeZendesk([
-            CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+            CountTicketsRequest::class => countResponse(),
         ]);
 
         new ZendeskConnector()->send(new CountTicketsRequest);
@@ -264,7 +269,7 @@ describe('headers', function () {
 
 it('returns failed responses and throws when creating a dto from them', function () {
     fakeZendesk([
-        SingleTicketRequest::class => MockResponse::fixture('details-incorrect-request'),
+        SingleTicketRequest::class => MockResponse::make(['error' => 'RecordNotFound', 'description' => 'Not found'], 404),
     ]);
 
     $response = new ZendeskConnector()->send(new SingleTicketRequest(81));

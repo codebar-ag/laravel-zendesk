@@ -7,11 +7,43 @@ use CodebarAg\Zendesk\Requests\CreateAttachmentRequest;
 use CodebarAg\Zendesk\ZendeskConnector;
 use Saloon\Http\Faking\MockResponse;
 
+function uploadResponse(): MockResponse
+{
+    return MockResponse::make([
+        'upload' => [
+            'token' => 'upload-token',
+            'expires_at' => '2026-10-26T12:00:00Z',
+            'attachments' => [[
+                'id' => 1,
+                'file_name' => 'test.png',
+                'content_type' => 'image/png',
+                'content_url' => 'https://codebar-zendesk.zendesk.com/attachments/token/abc/?name=test.png',
+                'size' => 26271,
+                'width' => 640,
+                'height' => 360,
+                'malware_scan_result' => 'not_scanned',
+                'thumbnails' => [['id' => 2, 'file_name' => 'test_thumb.png', 'width' => 80, 'height' => 45]],
+            ]],
+            'attachment' => [
+                'id' => 1,
+                'file_name' => 'test.png',
+                'content_type' => 'image/png',
+                'content_url' => 'https://codebar-zendesk.zendesk.com/attachments/token/abc/?name=test.png',
+                'size' => 26271,
+                'width' => 640,
+                'height' => 360,
+                'malware_scan_result' => 'not_scanned',
+                'thumbnails' => [['id' => 2, 'file_name' => 'test_thumb.png', 'width' => 80, 'height' => 45]],
+            ],
+        ],
+    ], 201);
+}
+
 $file = __DIR__.'/../Fixtures/Files/test.png';
 
 it('can create an attachment', function () use ($file) {
     $mockClient = fakeZendesk([
-        CreateAttachmentRequest::class => MockResponse::fixture('create-attachment-request'),
+        CreateAttachmentRequest::class => uploadResponse(),
     ]);
 
     $response = new ZendeskConnector()->send(new CreateAttachmentRequest(
@@ -30,8 +62,8 @@ it('can create an attachment', function () use ($file) {
 
     $dto = $response->dto();
 
-    expect($dto->token)->toBe('cs0vflvMytl7PHs8XueOo5mty')
-        ->and($dto->expires_at->toIso8601ZuluString())->toBe('2023-09-23T22:08:48Z')
+    expect($dto->token)->toBe('upload-token')
+        ->and($dto->expires_at->toIso8601ZuluString())->toBe('2026-10-26T12:00:00Z')
         ->and($dto->attachments)->toHaveCount(1)
         ->each->toBeInstanceOf(AttachmentDTO::class)
         ->and($dto->attachment->content_type)->toBe('image/png')
@@ -41,12 +73,12 @@ it('can create an attachment', function () use ($file) {
         ->and($dto->attachment->height)->toBe(360)
         ->and($dto->attachment->malware_scan_result)->toBe(MalwareScanResult::NOT_SCANNED)
         ->and($dto->attachment->thumbnails)->each->toBeInstanceOf(ThumbnailDTO::class)
-        ->and($dto->attachment->content_url)->toBe('https://codebarsolutions.zendesk.com/attachments/token/K32w31jO8UBB37UpKk2i1o4wg/?name=test.png');
+        ->and($dto->attachment->content_url)->toBe('https://codebar-zendesk.zendesk.com/attachments/token/abc/?name=test.png');
 });
 
 it('encodes the file name and can add files to an existing upload', function () use ($file) {
     $mockClient = fakeZendesk([
-        CreateAttachmentRequest::class => MockResponse::fixture('create-attachment-request'),
+        CreateAttachmentRequest::class => uploadResponse(),
     ]);
 
     new ZendeskConnector()->send(new CreateAttachmentRequest(

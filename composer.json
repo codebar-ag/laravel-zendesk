@@ -51,7 +51,8 @@
         "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
         "test": "vendor/bin/pest --no-coverage",
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/pint"
+        "format": "vendor/bin/pint",
+        "test:record": "ZENDESK_RECORD_FIXTURES=true vendor/bin/pest --no-coverage --group=live"
     },
     "config": {
         "sort-packages": true,
