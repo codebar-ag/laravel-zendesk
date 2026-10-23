@@ -330,6 +330,9 @@ composer analyse
 
 The tests in `tests/Live` run against **real Zendesk responses** that were recorded with Saloon fixtures (`tests/Fixtures/Saloon`). On a normal run they replay those fixtures offline. If a fixture is missing, its test is skipped.
 
+> [!NOTE]
+> The fixtures in this repository are currently **hand-written placeholders** based on the Zendesk API reference. They are marked with `"synthetic": true` in their `context`. Until they are recorded against a real Zendesk account, the test `replays fixtures recorded from the live Zendesk API` is skipped as a reminder.
+
 To record or refresh the fixtures against your Zendesk account:
 
 1. Create a confidential OAuth client with `read write` scope. Use a **sandbox or test account**.

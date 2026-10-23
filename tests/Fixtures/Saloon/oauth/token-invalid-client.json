@@ -1,0 +1,27 @@
+{
+    "statusCode": 401,
+    "headers": {
+        "Date": [
+            "Fri, 23 Oct 2026 12:00:00 GMT"
+        ],
+        "Content-Type": [
+            "application/json; charset=utf-8"
+        ],
+        "x-zendesk-api-version": [
+            "v2"
+        ],
+        "x-rate-limit": [
+            "700"
+        ],
+        "x-rate-limit-remaining": [
+            "699"
+        ],
+        "Set-Cookie": "REDACTED",
+        "x-request-id": "REDACTED"
+    },
+    "data": "{\"error\": \"invalid_client\", \"error_description\": \"Client authentication failed due to unknown client, no client authentication included, or unsupported authentication method.\"}",
+    "context": {
+        "synthetic": true,
+        "note": "Hand-written placeholder based on the Zendesk API reference. Replace with `composer test:record`."
+    }
+}

@@ -40,9 +40,9 @@ Zendesk is [removing API tokens](https://support.zendesk.com/hc/en-us/articles/1
 
 ### Changed
 
-- Live tests (`tests/Live`, `composer test:record`) record real Zendesk responses as redacted Saloon fixtures and replay them offline. Tests use the `Saloon::fake()` facade.
+- Live tests (`tests/Live`, `composer test:record`) record real Zendesk responses as redacted Saloon fixtures and replay them offline. The fixtures shipped with this release are hand-written placeholders until they are recorded against a live account. Tests use the `Saloon::fake()` facade.
 - `AllTicketsRequest` accepts `perPage`, `page`, `sortBy` and `sortOrder`.
-- PHPStan level raised from 5 to 8. The test suite blocks stray HTTP requests. 126 Pest 5 tests plus 7 live tests cover authentication, token caching, retries, requests and DTOs.
+- PHPStan level raised from 5 to 8. The test suite blocks stray HTTP requests. 133 Pest 5 tests (including 7 live tests replaying fixtures) cover authentication, token caching, retries, requests and DTOs.
 - CI runs on PHP 8.5 only. The stale `.php-cs-fixer.dist.php` was removed, and `composer format` now runs Pint.
 
 ### Release tagging
