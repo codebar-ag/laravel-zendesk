@@ -1,31 +1,38 @@
 <?php
 
+use CodebarAg\Zendesk\Dto\Tickets\AllTicketsDTO;
+use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
 use CodebarAg\Zendesk\Enums\TicketPriority;
 use CodebarAg\Zendesk\Requests\AllTicketsRequest;
 use CodebarAg\Zendesk\ZendeskConnector;
 use Saloon\Http\Faking\MockResponse;
-use Saloon\Laravel\Http\Faking\MockClient;
 
-it('can get all tickets', closure: function () {
-    $mockClient = new MockClient([
+it('can get all tickets', function () {
+    $mockClient = fakeZendesk([
         AllTicketsRequest::class => MockResponse::fixture('all-tickets-request'),
     ]);
 
-    $connector = new ZendeskConnector;
-    $connector->withMockClient($mockClient);
+    $response = new ZendeskConnector()->send(new AllTicketsRequest);
 
-    $response = $connector->send(new AllTicketsRequest);
+    $pendingRequest = $mockClient->getLastPendingRequest();
+    expect($pendingRequest->getMethod()->value)->toBe('GET')
+        ->and($pendingRequest->getUrl())->toBe('https://codebar-zendesk.zendesk.com/api/v2/tickets.json');
 
-    $mockClient->assertSent(AllTicketsRequest::class);
+    $dto = $response->dto();
+    $ticket = $dto->tickets[0];
 
-    expect($response->dto()->count)->toBe(6)
-        ->and($response->dto()->tickets[0]['id'])->toBe(21)
-        ->and($response->dto()->tickets[0]['subject'])->toBe('My printer is on fire!')
-        ->and($response->dto()->tickets[0]['raw_subject'])->toBe('My printer is on fire!')
-        ->and($response->dto()->tickets[0]['description'])->toBe('The smoke is very colorful.')
-        ->and($response->dto()->tickets[0]['priority'])->toBe(TicketPriority::URGENT->value)
-        ->and($response->dto()->tickets[0]['custom_fields'][1]['id'])->toBe(10350920893084)
-        ->and($response->dto()->tickets[0]['custom_fields'][1]['value'])->toBe('Check field works')
-        ->and($response->dto()->tickets[0]['custom_fields'][2]['id'])->toBe(10350942541980)
-        ->and($response->dto()->tickets[0]['custom_fields'][2]['value'])->toBe('Check field works number 2');
+    expect($dto)->toBeInstanceOf(AllTicketsDTO::class)
+        ->and($dto->count)->toBe(6)
+        ->and($dto->tickets)->toHaveCount(6)
+        ->each->toBeInstanceOf(SingleTicketDTO::class)
+        ->and($ticket->id)->toBe(21)
+        ->and($ticket->subject)->toBe('My printer is on fire!')
+        ->and($ticket->raw_subject)->toBe('My printer is on fire!')
+        ->and($ticket->description)->toBe('The smoke is very colorful.')
+        ->and($ticket->priority)->toBe(TicketPriority::URGENT)
+        ->and($ticket->due_at)->toBeNull()
+        ->and($ticket->custom_fields[1]['id'])->toBe(10350920893084)
+        ->and($ticket->custom_fields[1]['value'])->toBe('Check field works')
+        ->and($ticket->custom_fields[2]['id'])->toBe(10350942541980)
+        ->and($ticket->custom_fields[2]['value'])->toBe('Check field works number 2');
 });

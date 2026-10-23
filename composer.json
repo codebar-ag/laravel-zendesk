@@ -1,11 +1,13 @@
 {
     "name": "codebar-ag/laravel-zendesk",
-    "description": "Zendesk integration with Laravel",
+    "description": "Zendesk integration with Laravel using OAuth 2.0",
     "keywords": [
         "zendesk",
         "laravel",
         "codebar-ag",
-        "laravel-zendesk"
+        "laravel-zendesk",
+        "oauth",
+        "saloon"
     ],
     "homepage": "https://github.com/codebar-ag/laravel-zendesk",
     "license": "MIT",
@@ -18,24 +20,22 @@
         }
     ],
     "require": {
-        "php": "8.3.*|8.4.*|8.5.*",
-        "guzzlehttp/guzzle": "^7.8",
+        "php": "8.5.*",
         "illuminate/contracts": "^13.0",
-        "saloonphp/cache-plugin": "^3.1",
-        "saloonphp/laravel-plugin": "^4.0",
-        "saloonphp/saloon": "^4.0",
-        "spatie/laravel-data": "^4.0",
-        "spatie/laravel-package-tools": "^1.19"
+        "illuminate/support": "^13.0",
+        "saloonphp/laravel-plugin": "^5.0",
+        "saloonphp/saloon": "^4.5",
+        "spatie/laravel-data": "^4.23",
+        "spatie/laravel-package-tools": "^1.93"
     },
     "require-dev": {
-        "laravel/pint": "^1.21",
-        "larastan/larastan": "^3.9",
-        "orchestra/testbench": "^11.0",
-        "pestphp/pest": "^4.0",
+        "larastan/larastan": "^3.13",
+        "laravel/pint": "^1.32",
+        "orchestra/testbench": "^11.3",
+        "pestphp/pest": "^5.0",
         "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "spatie/laravel-ray": "^1.39"
+        "phpstan/phpstan-deprecation-rules": "^2.0.5",
+        "phpstan/phpstan-phpunit": "^2.1"
     },
     "autoload": {
         "psr-4": {
@@ -48,10 +48,10 @@
         }
     },
     "scripts": {
-        "analyse": "vendor/bin/phpstan analyse",
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
         "test": "vendor/bin/pest --no-coverage",
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+        "format": "vendor/bin/pint"
     },
     "config": {
         "sort-packages": true,

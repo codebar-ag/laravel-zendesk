@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" backupGlobals="false"
-         bootstrap="vendor/autoload.php" colors="true" processIsolation="false" stopOnFailure="false"
-         executionOrder="random" failOnWarning="true" failOnRisky="true" failOnEmptyTestSuite="true"
-         beStrictAboutOutputDuringTests="true" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         executionOrder="random"
+         failOnWarning="true"
+         failOnRisky="true"
+         failOnEmptyTestSuite="true"
+         failOnDeprecation="true"
+         failOnPhpunitDeprecation="false"
+         beStrictAboutOutputDuringTests="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="codebar Solutions AG Test Suite">
             <directory>tests</directory>
@@ -21,9 +29,10 @@
     </logging>
     <php>
         <env name="APP_KEY" value="base64:F+mHMDBbavrsp/I3WYA5lDSwDJJI/0wQG4eM3csq/lo="/>
+        <env name="CACHE_STORE" value="array"/>
         <env name="ZENDESK_SUBDOMAIN" value=""/>
-        <env name="ZENDESK_EMAIL_ADDRESS" value=""/>
-        <env name="ZENDESK_API_TOKEN" value=""/>
+        <env name="ZENDESK_OAUTH_CLIENT_ID" value=""/>
+        <env name="ZENDESK_OAUTH_CLIENT_SECRET" value=""/>
     </php>
     <source>
         <include>

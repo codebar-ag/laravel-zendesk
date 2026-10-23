@@ -3,7 +3,6 @@
 namespace CodebarAg\Zendesk\Requests;
 
 use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
-use Exception;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -16,33 +15,35 @@ class CreateSingleTicketRequest extends Request implements HasBody
 
     protected Method $method = Method::POST;
 
-    public function resolveEndpoint(): string
-    {
-        return '/tickets';
-    }
-
+    /**
+     * @param  array<string, mixed>|SingleTicketDTO  $ticket
+     */
     public function __construct(
-        protected readonly array|SingleTicketDTO $createTicket
+        protected readonly array|SingleTicketDTO $ticket,
     ) {}
 
+    public function resolveEndpoint(): string
+    {
+        return '/tickets.json';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     protected function defaultBody(): array
     {
-        $body = $this->createTicket;
-
-        if (! $body instanceof SingleTicketDTO) {
-            $body = SingleTicketDTO::fromArray($body);
-        }
+        $ticket = $this->ticket instanceof SingleTicketDTO
+            ? $this->ticket
+            : SingleTicketDTO::fromArray($this->ticket);
 
         return [
-            'ticket' => $body->toArray(),
+            'ticket' => $ticket->toRequestArray(),
         ];
     }
 
-    public function createDtoFromResponse(Response $response): mixed
+    public function createDtoFromResponse(Response $response): SingleTicketDTO
     {
-        if (! $response->successful()) {
-            throw new Exception('Request was not successful. Unable to create DTO.');
-        }
+        $response->throw();
 
         return SingleTicketDTO::fromResponse($response);
     }

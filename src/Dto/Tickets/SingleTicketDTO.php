@@ -2,6 +2,7 @@
 
 namespace CodebarAg\Zendesk\Dto\Tickets;
 
+use CodebarAg\Zendesk\Dto\Concerns\ParsesDates;
 use CodebarAg\Zendesk\Dto\Tickets\Comments\CommentDTO;
 use CodebarAg\Zendesk\Enums\TicketPriority;
 use CodebarAg\Zendesk\Enums\TicketType;
@@ -12,6 +13,27 @@ use Spatie\LaravelData\Data;
 
 class SingleTicketDTO extends Data
 {
+    use ParsesDates;
+
+    /**
+     * @param  array<mixed>|null  $attribute_value_ids
+     * @param  array<mixed>|null  $collaborator_ids
+     * @param  array<mixed>|null  $collaborators
+     * @param  array<mixed>|null  $custom_fields
+     * @param  array<mixed>|null  $email_cc_ids
+     * @param  array<mixed>|null  $email_ccs
+     * @param  array<mixed>|null  $follower_ids
+     * @param  array<mixed>|null  $followers
+     * @param  array<mixed>|null  $followup_ids
+     * @param  array<mixed>|null  $macro_ids
+     * @param  array<mixed>|null  $metadata
+     * @param  array<mixed>|null  $requester
+     * @param  array<mixed>|null  $satisfaction_rating
+     * @param  array<mixed>|null  $sharing_agreement_ids
+     * @param  array<mixed>|null  $tags
+     * @param  array<mixed>|null  $via
+     * @param  array<mixed>|null  $voice_comment
+     */
     public function __construct(
         public ?bool $allow_attachments,
         public ?bool $allow_channelback,
@@ -24,6 +46,7 @@ class SingleTicketDTO extends Data
         public ?CommentDTO $comment,
         public ?Carbon $created_at,
         public ?array $custom_fields,
+        public ?int $custom_status_id,
         public ?string $description,
         public ?Carbon $due_at,
         public ?array $email_cc_ids,
@@ -34,6 +57,7 @@ class SingleTicketDTO extends Data
         public ?array $followup_ids,
         public ?int $forum_topic_id,
         public ?bool $from_messaging_channel,
+        public ?int $generated_timestamp,
         public ?int $group_id,
         public ?bool $has_incidents,
         public ?int $id,
@@ -68,32 +92,29 @@ class SingleTicketDTO extends Data
 
     public static function fromResponse(Response $response): self
     {
-        if ($response->failed()) {
-            throw new \Exception('Failed to get a single ticket', $response->status());
-        }
-
-        $data = Arr::get($response->json(), 'ticket');
-
-        return self::fromArray($data);
+        return self::fromArray((array) $response->json('ticket'));
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
         $comment = Arr::get($data, 'comment');
 
-        if ($comment && ! $comment instanceof CommentDTO) {
+        if (is_array($comment)) {
             $comment = CommentDTO::fromArray($comment);
         }
 
         $priority = Arr::get($data, 'priority');
 
-        if ($priority && ! $priority instanceof TicketPriority) {
+        if (is_string($priority)) {
             $priority = TicketPriority::tryFrom($priority);
         }
 
         $type = Arr::get($data, 'type');
 
-        if ($type && ! $type instanceof TicketType) {
+        if (is_string($type)) {
             $type = TicketType::tryFrom($type);
         }
 
@@ -107,10 +128,11 @@ class SingleTicketDTO extends Data
             collaborator_ids: Arr::get($data, 'collaborator_ids'),
             collaborators: Arr::get($data, 'collaborators'),
             comment: $comment,
-            created_at: Carbon::parse(Arr::get($data, 'created_at')),
+            created_at: self::parseDate(Arr::get($data, 'created_at')),
             custom_fields: Arr::get($data, 'custom_fields'),
+            custom_status_id: Arr::get($data, 'custom_status_id'),
             description: Arr::get($data, 'description'),
-            due_at: Carbon::parse(Arr::get($data, 'due_at')),
+            due_at: self::parseDate(Arr::get($data, 'due_at')),
             email_cc_ids: Arr::get($data, 'email_cc_ids'),
             email_ccs: Arr::get($data, 'email_ccs'),
             external_id: Arr::get($data, 'external_id'),
@@ -119,6 +141,7 @@ class SingleTicketDTO extends Data
             followup_ids: Arr::get($data, 'followup_ids'),
             forum_topic_id: Arr::get($data, 'forum_topic_id'),
             from_messaging_channel: Arr::get($data, 'from_messaging_channel'),
+            generated_timestamp: Arr::get($data, 'generated_timestamp'),
             group_id: Arr::get($data, 'group_id'),
             has_incidents: Arr::get($data, 'has_incidents'),
             id: Arr::get($data, 'id'),
@@ -142,13 +165,29 @@ class SingleTicketDTO extends Data
             tags: Arr::get($data, 'tags'),
             ticket_form_id: Arr::get($data, 'ticket_form_id'),
             type: $type,
-            updated_at: Carbon::parse(Arr::get($data, 'updated_at')),
-            updated_stamp: Arr::get($data, 'updated_stamp'),
+            updated_at: self::parseDate(Arr::get($data, 'updated_at')),
+            updated_stamp: self::parseDate(Arr::get($data, 'updated_stamp')),
             url: Arr::get($data, 'url'),
             via: Arr::get($data, 'via'),
             via_followup_source_id: Arr::get($data, 'via_followup_source_id'),
             via_id: Arr::get($data, 'via_id'),
             voice_comment: Arr::get($data, 'voice_comment'),
         );
+    }
+
+    /**
+     * The ticket as payload for create/update requests, without empty (null) attributes.
+     *
+     * @return array<string, mixed>
+     */
+    public function toRequestArray(): array
+    {
+        $ticket = array_filter($this->toArray(), fn (mixed $value): bool => $value !== null);
+
+        if (isset($ticket['comment']) && is_array($ticket['comment'])) {
+            $ticket['comment'] = array_filter($ticket['comment'], fn (mixed $value): bool => $value !== null);
+        }
+
+        return $ticket;
     }
 }

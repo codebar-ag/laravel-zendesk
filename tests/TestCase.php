@@ -3,25 +3,39 @@
 namespace CodebarAg\Zendesk\Tests;
 
 use CodebarAg\Zendesk\ZendeskServiceProvider;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Saloon\Config;
+use Saloon\Http\Faking\MockClient;
+use Saloon\MockConfig;
 use Spatie\LaravelData\LaravelDataServiceProvider;
 use Spatie\LaravelData\Support\DataConfig;
 
 class TestCase extends Orchestra
 {
+    private static bool $saloonConfigured = false;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'CodebarAg\\Zendesk\\Database\\Factories\\'.class_basename($modelName).'Factory'
-        );
+        // Never hit the real Zendesk API from the test suite.
+        if (! self::$saloonConfigured) {
+            Config::preventStrayRequests();
+            MockConfig::setFixturePath(__DIR__.'/Fixtures/Saloon');
+            MockConfig::throwOnMissingFixtures();
+            self::$saloonConfigured = true;
+        }
 
-        // Provide a config array to DataConfig
         $this->app->when(DataConfig::class)
             ->needs('$config')
             ->give([]);
+    }
+
+    protected function tearDown(): void
+    {
+        MockClient::destroyGlobal();
+
+        parent::tearDown();
     }
 
     protected function getPackageProviders($app): array
@@ -34,17 +48,12 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app): void
     {
-        $app['config']->set('database.default', 'sqlite');
-        $app['config']->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-
-        if (is_dir(__DIR__.'/Fixtures/Saloon/') && count(scandir(__DIR__.'/Fixtures/Saloon')) > 0) {
-            $app['config']->set('zendesk.subdomain', 'codebar-zendesk');
-            $app['config']->set('zendesk.auth.email_address', 'fake-email');
-            $app['config']->set('zendesk.auth.api_token', 'fake-token');
-        }
+        $app['config']->set('cache.default', 'array');
+        $app['config']->set('zendesk.subdomain', 'codebar-zendesk');
+        $app['config']->set('zendesk.auth.method', 'oauth');
+        $app['config']->set('zendesk.auth.oauth.client_id', 'test-client');
+        $app['config']->set('zendesk.auth.oauth.client_secret', 'test-secret');
+        $app['config']->set('zendesk.auth.oauth.scopes', 'read write');
+        $app['config']->set('zendesk.auth.oauth.expires_in', null);
     }
 }

@@ -8,12 +8,18 @@ use Spatie\LaravelData\Data;
 
 class AttachmentDTO extends Data
 {
+    /**
+     * @param  array<mixed>|null  $thumbnails
+     */
+    /**
+     * @param  array<int, ThumbnailDTO>|null  $thumbnails
+     */
     public function __construct(
         public ?string $content_type,
         public ?string $content_url,
         public ?bool $deleted,
         public ?string $file_name,
-        public ?string $height,
+        public ?int $height,
         public ?int $id,
         public ?bool $inline,
         public ?bool $malware_access_override,
@@ -22,17 +28,21 @@ class AttachmentDTO extends Data
         public ?int $size,
         public ?array $thumbnails,
         public ?string $url,
-        public ?string $width,
+        public ?int $width,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
         $thumbnails = Arr::get($data, 'thumbnails');
 
-        if ($thumbnails) {
-            foreach ($thumbnails as $key => $thumbnail) {
-                $thumbnails[$key] = self::getThumbnail($thumbnail);
-            }
+        if (is_array($thumbnails)) {
+            $thumbnails = array_map(
+                fn (array|ThumbnailDTO $thumbnail): ThumbnailDTO => $thumbnail instanceof ThumbnailDTO ? $thumbnail : ThumbnailDTO::fromArray($thumbnail),
+                $thumbnails,
+            );
         }
 
         return new self(
@@ -44,23 +54,21 @@ class AttachmentDTO extends Data
             id: Arr::get($data, 'id'),
             inline: Arr::get($data, 'inline'),
             malware_access_override: Arr::get($data, 'malware_access_override'),
-            malware_scan_result: MalwareScanResult::tryFrom(Arr::get($data, 'malware_scan_result')),
+            malware_scan_result: self::malwareScanResult(Arr::get($data, 'malware_scan_result')),
             mapped_content_url: Arr::get($data, 'mapped_content_url'),
             size: Arr::get($data, 'size'),
-            thumbnails: $thumbnails ?? null,
+            thumbnails: $thumbnails,
             url: Arr::get($data, 'url'),
             width: Arr::get($data, 'width'),
         );
     }
 
-    private static function getThumbnail(null|array|ThumbnailDTO $data): ThumbnailDTO
+    private static function malwareScanResult(mixed $value): ?MalwareScanResult
     {
-        $attachment = $data ?? null;
-
-        if (! $attachment instanceof ThumbnailDTO) {
-            $attachment = ThumbnailDTO::fromArray($attachment);
+        if ($value instanceof MalwareScanResult) {
+            return $value;
         }
 
-        return $attachment;
+        return is_string($value) ? MalwareScanResult::tryFrom($value) : null;
     }
 }

@@ -13,7 +13,7 @@ class ThumbnailDTO extends Data
         public ?string $content_url,
         public ?bool $deleted,
         public ?string $file_name,
-        public ?string $height,
+        public ?int $height,
         public ?int $id,
         public ?bool $inline,
         public ?bool $malware_access_override,
@@ -21,9 +21,12 @@ class ThumbnailDTO extends Data
         public ?string $mapped_content_url,
         public ?int $size,
         public ?string $url,
-        public ?string $width,
+        public ?int $width,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -35,11 +38,20 @@ class ThumbnailDTO extends Data
             id: Arr::get($data, 'id'),
             inline: Arr::get($data, 'inline'),
             malware_access_override: Arr::get($data, 'malware_access_override'),
-            malware_scan_result: MalwareScanResult::tryFrom(Arr::get($data, 'malware_scan_result')),
+            malware_scan_result: self::malwareScanResult(Arr::get($data, 'malware_scan_result')),
             mapped_content_url: Arr::get($data, 'mapped_content_url'),
             size: Arr::get($data, 'size'),
             url: Arr::get($data, 'url'),
             width: Arr::get($data, 'width'),
         );
+    }
+
+    private static function malwareScanResult(mixed $value): ?MalwareScanResult
+    {
+        if ($value instanceof MalwareScanResult) {
+            return $value;
+        }
+
+        return is_string($value) ? MalwareScanResult::tryFrom($value) : null;
     }
 }

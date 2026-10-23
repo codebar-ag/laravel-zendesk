@@ -3,7 +3,6 @@
 namespace CodebarAg\Zendesk\Requests;
 
 use CodebarAg\Zendesk\Dto\Tickets\AllTicketsDTO;
-use Exception;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
@@ -17,11 +16,9 @@ class AllTicketsRequest extends Request
         return '/tickets.json';
     }
 
-    public function createDtoFromResponse(Response $response): mixed
+    public function createDtoFromResponse(Response $response): AllTicketsDTO
     {
-        if (! $response->successful()) {
-            throw new Exception('Request was not successful. Unable to create DTO.');
-        }
+        $response->throw();
 
         return AllTicketsDTO::fromResponse($response);
     }

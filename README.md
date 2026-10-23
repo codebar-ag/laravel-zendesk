@@ -7,7 +7,10 @@
 [![PHPStan](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/phpstan.yml/badge.svg)](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/phpstan.yml)
 [![Dependency Review](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/codebar-ag/laravel-zendesk/actions/workflows/dependency-review.yml)
 
-This package was developed to give you a quick start to creating tickets via the Zendesk API.
+This package gives you a quick start for working with the Zendesk Support API (tickets and attachments) from Laravel. It is built on [Saloon](https://docs.saloon.dev) and authenticates with **OAuth 2.0**.
+
+> [!IMPORTANT]
+> Zendesk is [removing API tokens](https://support.zendesk.com/hc/en-us/articles/10851263566234) for the Support APIs. No new API tokens can be created after **October 27, 2026**, and all existing tokens stop working on **April 30, 2027**. Starting with **v14**, this package only supports OAuth. See [UPGRADING.md](UPGRADING.md) for how to migrate.
 
 ## 💡 What is Zendesk?
 
@@ -16,23 +19,31 @@ knowledge base and online communities.
 
 ## 🛠 Requirements
 
-| Package 	 | PHP 	       | Laravel 	 | Zendesk 	 |
-|-----------|-------------|-----------|:---------:|
-| v13.0     | ^8.3 - ^8.5 | 13.x      |     ✅     |
-| v12.0     | ^8.2 - ^8.4 | 12.x      |     ✅     |
-| v11.0     | ^8.2 - ^8.3 | 11.x      |     ✅     |
-| v1.0      | ^8.2        | 10.x      |     ✅     |
+| Package 	 | PHP 	       | Laravel 	 | Authentication          |
+|-----------|-------------|-----------|-------------------------|
+| v14.0     | 8.5         | 13.x      | OAuth 2.0               |
+| v13.0     | ^8.3 - ^8.5 | 13.x      | Basic, API token        |
+| v12.0     | ^8.2 - ^8.4 | 12.x      | Basic, API token        |
+| v11.0     | ^8.2 - ^8.3 | 11.x      | Basic, API token        |
+| v1.0      | ^8.2        | 10.x      | Basic, API token        |
 
+## 🔐 Authentication
 
-## Authentication
+| Method                                      | Config value   | Supported |
+|---------------------------------------------|----------------|:---------:|
+| OAuth client credentials (server to server) | `oauth`        |     ✅     |
+| OAuth access token (managed by your app)    | `access_token` |     ✅     |
+| API token                                   | –              |  ❌ (v13)  |
+| Basic Auth (email + password)               | –              |  ❌ (v13)  |
 
-The currently supported authentication methods are:
+### Create an OAuth client in Zendesk
 
-| Method 	           | Supported 	 |
-|--------------------|:-----------:|
-| Basic Auth         |      ✅      |
-| API token          |      ✅      |
-| OAuth access token |      ❌      |
+1. In Zendesk **Admin Center**, go to **Apps and integrations → APIs → OAuth clients** and click **Add OAuth client**.
+2. Choose the client kind **Confidential**. The client credentials grant does not work with public clients.
+3. Copy the **Identifier** (client ID) and the **Secret**. Zendesk shows the secret only once.
+4. Only allow the scopes your app needs, e.g. `tickets:read tickets:write`.
+
+More details: [Using OAuth authentication with your application](https://support.zendesk.com/hc/en-us/articles/4408845965210).
 
 ## ⚙️ Installation
 
@@ -45,34 +56,95 @@ composer require codebar-ag/laravel-zendesk
 Optionally, you can publish the config file with:
 
 ```bash
-php artisan vendor:publish --provider="CodebarAg\Zendesk\ZendeskServiceProvider" --tag="config"
+php artisan vendor:publish --provider="CodebarAg\Zendesk\ZendeskServiceProvider" --tag="zendesk-config"
 ```
 
-You can add the following env variables to your `.env` file:
+Add the following variables to your `.env` file:
 
 ```dotenv
-ZENDESK_SUBDOMAIN=your-subdomain #required
-ZENDESK_AUTHENTICATION_METHOD=token #default ['basic', 'token']
-ZENDESK_EMAIL_ADDRESS=test@example.com #required
-ZENDESK_API_TOKEN=your-api-token #required only for token authentication
-ZENDESK_API_PASSWORD=your-password #required only for basic authentication
+ZENDESK_SUBDOMAIN=your-subdomain                     # required, e.g. "acme" for https://acme.zendesk.com
+ZENDESK_AUTHENTICATION_METHOD=oauth                  # default, 'oauth' or 'access_token'
+ZENDESK_OAUTH_CLIENT_ID=your-oauth-client-identifier # required for 'oauth'
+ZENDESK_OAUTH_CLIENT_SECRET=your-oauth-client-secret # required for 'oauth'
+ZENDESK_OAUTH_SCOPES="read write"                    # optional, space separated, default "read write"
+ZENDESK_OAUTH_EXPIRES_IN=                            # optional, token lifetime in seconds (300 - 172800)
+ZENDESK_CACHE_STORE=                                 # optional, cache store for access tokens, default store if empty
 ```
 
-`Note: We handle base64 encoding for you so you don't have to encode your credentials.`
+### How OAuth works in this package
 
-You can retrieve your API token from
-your [Zendesk Dashboard](https://developer.zendesk.com/api-reference/introduction/security-and-auth/)
+With the `oauth` method, the connector uses the OAuth **client credentials** grant (`POST https://{subdomain}.zendesk.com/oauth/tokens`):
+
+- Before the first request, the package requests an access token and sends it as `Authorization: Bearer …`.
+- The token is cached in your Laravel cache and renewed automatically 60 seconds before it expires. New Zendesk OAuth clients issue tokens that are valid for 30 minutes by default.
+- A cache lock makes sure that parallel workers request only one token at a time.
+- If Zendesk rejects a cached token with `401`, the token is discarded and the request is retried **once** with a fresh token.
+
+> [!TIP]
+> Use a shared cache store (Redis, database, …) in production. With the `array` store, every PHP process requests its own token.
+
+The automatic retry applies to `$connector->send()`. Requests sent with `sendAsync()` or `pool()` still use the cached token, but they are not retried.
+
+### Using your own access token
+
+If your app already has an OAuth access token, for example from an authorization code flow, use the `access_token` method:
+
+```dotenv
+ZENDESK_AUTHENTICATION_METHOD=access_token
+ZENDESK_ACCESS_TOKEN=your-access-token
+```
+
+or set the token at runtime:
+
+```php
+use Saloon\Http\Auth\TokenAuthenticator;
+
+$connector = new ZendeskConnector();
+$connector->authenticate(new TokenAuthenticator($user->zendesk_access_token));
+```
+
+The package does not refresh tokens that you pass in this way.
 
 ## Usage
 
-To use the package, you need to create a ZendeskConnector instance.
+Create a connector, either directly or through the facade:
 
 ```php
+use CodebarAg\Zendesk\Facades\Zendesk;
 use CodebarAg\Zendesk\ZendeskConnector;
-...
 
 $connector = new ZendeskConnector();
+// or
+$connector = Zendesk::connector();
 ```
+
+### Multiple Zendesk accounts
+
+Pass the subdomain and the OAuth credentials to connect to another account at runtime. Each combination of subdomain, client and scopes gets its own cached token.
+
+```php
+use CodebarAg\Zendesk\Auth\OAuthCredentials;
+use CodebarAg\Zendesk\ZendeskConnector;
+
+$connector = new ZendeskConnector(
+    subdomain: 'acme',
+    credentials: new OAuthCredentials(
+        clientId: 'acme-client',
+        clientSecret: 'acme-secret',
+        scopes: ['tickets:read', 'tickets:write'],
+    ),
+);
+```
+
+### Error handling
+
+| Situation                                                    | Exception                                                   |
+|--------------------------------------------------------------|-------------------------------------------------------------|
+| Missing or invalid config (subdomain, client ID, method, …)  | `CodebarAg\Zendesk\Exceptions\ZendeskConfigurationException`  |
+| Zendesk refuses to issue an access token                     | `CodebarAg\Zendesk\Exceptions\ZendeskAuthenticationException` |
+| Calling `->dto()` on a failed response (4xx/5xx)             | Saloon `RequestException`, e.g. `NotFoundException`          |
+
+Both package exceptions extend `CodebarAg\Zendesk\Exceptions\ZendeskException`. `send()` itself does not throw for failed responses. Check `$response->failed()`, or call `$response->throw()`.
 
 ### Requests
 
@@ -114,7 +186,7 @@ We provide enums for the following values:
 
 ### Zendesk API and DTO coverage
 
-Official ticket JSON is documented in the [Zendesk Tickets API](https://developer.zendesk.com/api-reference/ticketing/tickets/tickets/). [`SingleTicketDTO`](src/Dto/Tickets/SingleTicketDTO.php) maps a large subset of fields returned by Zendesk; it is not guaranteed to include every property the API may return. For example, the docs show `custom_status_id` and `generated_timestamp` on ticket objects; those keys are not mapped on `SingleTicketDTO` today.
+Official ticket JSON is documented in the [Zendesk Tickets API](https://developer.zendesk.com/api-reference/ticketing/tickets/tickets/). [`SingleTicketDTO`](src/Dto/Tickets/SingleTicketDTO.php) maps a large subset of the fields Zendesk returns, but it may not include every property. Missing dates are `null`. They are not replaced with the current time.
 
 ### DTOs
 
@@ -129,6 +201,7 @@ We provide DTOs for the following:
 | AllTicketsDTO     | `CodebarAg\Zendesk\Dto\Tickets\AllTicketsDTO` |
 | CountTicketsDTO   | `CodebarAg\Zendesk\Dto\Tickets\CountTicketsDTO` |
 | SingleTicketDTO   | `CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO` |
+| AccessTokenDTO    | `CodebarAg\Zendesk\Dto\OAuth\AccessTokenDTO` |
 
 `Note: This is the preferred way to work with requests and responses. You can still use the json, object, and collect methods, and pass arrays into requests where supported.`
 
@@ -175,7 +248,7 @@ use CodebarAg\Zendesk\Requests\AllTicketsRequest;
 ...
 
 $listTicketResponse = $connector->send(new AllTicketsRequest());
-$listTicketResponse->dto();
+$tickets = $listTicketResponse->dto()->tickets; // array of SingleTicketDTO
 ```
 
 #### Count all tickets
@@ -219,6 +292,14 @@ $uploadResponse = $connector->send(
 
 $token = $uploadResponse->dto()->token;
 
+// Optional: add more files to the same upload
+$connector->send(new CreateAttachmentRequest(
+    fileName: 'second.pdf',
+    mimeType: 'application/pdf',
+    stream: Storage::disk('local')->readStream('public/second.pdf'),
+    token: $token,
+));
+
 $ticketResponse = $connector->send(
     new CreateSingleTicketRequest(
         SingleTicketDTO::fromArray([
@@ -237,16 +318,28 @@ $ticket = $ticketResponse->dto();
 
 ## 🚧 Testing
 
-Copy your own phpunit.xml-file.
+The test suite never calls the real Zendesk API. Stray requests are blocked and all responses are mocked with Saloon.
 
 ```bash
 cp phpunit.xml.dist phpunit.xml
+composer test
+composer analyse
 ```
 
-Run the tests:
+### Testing your own app
 
-```bash
-./vendor/bin/pest
+Fake the token endpoint together with your requests:
+
+```php
+use CodebarAg\Zendesk\Requests\CountTicketsRequest;
+use CodebarAg\Zendesk\Requests\OAuth\CreateAccessTokenRequest;
+use Saloon\Http\Faking\MockClient;
+use Saloon\Http\Faking\MockResponse;
+
+MockClient::global([
+    CreateAccessTokenRequest::class => MockResponse::make(['access_token' => 'fake', 'token_type' => 'bearer', 'expires_in' => 1800]),
+    CountTicketsRequest::class => MockResponse::make(['count' => ['value' => 1, 'refreshed_at' => now()->toIso8601String()]]),
+]);
 ```
 
 ## 📝 Changelog
@@ -264,7 +357,7 @@ composer test
 ### Code Style
 
 ```bash
-./vendor/bin/pint
+composer format
 ```
 
 ## 🧑‍💻 Security Vulnerabilities

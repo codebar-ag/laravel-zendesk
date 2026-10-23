@@ -1,191 +1,274 @@
 <?php
 
+use CodebarAg\Zendesk\Auth\AuthMethod;
+use CodebarAg\Zendesk\Auth\OAuthCredentials;
+use CodebarAg\Zendesk\Auth\ZendeskOAuthConnector;
+use CodebarAg\Zendesk\Exceptions\ZendeskAuthenticationException;
+use CodebarAg\Zendesk\Exceptions\ZendeskConfigurationException;
+use CodebarAg\Zendesk\Requests\CountTicketsRequest;
+use CodebarAg\Zendesk\Requests\OAuth\CreateAccessTokenRequest;
 use CodebarAg\Zendesk\Requests\SingleTicketRequest;
 use CodebarAg\Zendesk\ZendeskConnector;
-use Illuminate\Support\Facades\Config;
+use Saloon\Exceptions\Request\Statuses\NotFoundException;
+use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Faking\MockResponse;
-use Saloon\Laravel\Http\Faking\MockClient;
+use Saloon\Http\PendingRequest;
 
-it('will throw an exception if a subdomain is not set', closure: function () {
-    Config::set('zendesk.subdomain');
-    $connector = new ZendeskConnector;
-    $connector->resolveBaseUrl();
+describe('base url', function () {
+    it('resolves the base url from the config', function () {
+        expect(new ZendeskConnector()->resolveBaseUrl())->toBe('https://codebar-zendesk.zendesk.com/api/v2');
+    });
 
-})->throws('No subdomain provided.', 500);
+    it('prefers the subdomain passed to the constructor', function () {
+        expect(new ZendeskConnector('acme')->resolveBaseUrl())->toBe('https://acme.zendesk.com/api/v2');
+    });
 
-it('will not throw an exception if a subdomain is set', closure: function () {
-    config([
-        'zendesk.subdomain' => 'codebarsolutionsag',
-    ]);
+    it('throws if no subdomain is configured', function (?string $subdomain) {
+        config(['zendesk.subdomain' => $subdomain]);
 
-    $connector = new ZendeskConnector;
-    $connector->resolveBaseUrl();
+        new ZendeskConnector()->resolveBaseUrl();
+    })->with([null, ''])->throws(ZendeskConfigurationException::class, 'No subdomain provided.');
 
-})->expectNotToPerformAssertions();
+    it('rejects subdomains that would change the host', function (string $subdomain) {
+        new ZendeskConnector($subdomain)->resolveBaseUrl();
+    })->with([
+        'evil.com/',
+        'acme.zendesk.com',
+        'acme@evil',
+        '-acme',
+        'acme-',
+        'ac me',
+    ])->throws(ZendeskConfigurationException::class, 'Invalid subdomain provided');
 
-it('will return the base path', closure: function () {
-    config([
-        'zendesk.subdomain' => 'codebarsolutionsag',
-    ]);
+    it('accepts subdomains with digits and dashes', function () {
+        expect(new ZendeskConnector('codebar-2')->resolveBaseUrl())->toBe('https://codebar-2.zendesk.com/api/v2');
+    });
 
-    $connector = new ZendeskConnector;
-    $path = $connector->resolveBaseUrl();
-
-    expect($path)->toBe('https://codebarsolutionsag.zendesk.com/api/v2');
-
+    it('uses the account host for the oauth connector', function () {
+        expect(new ZendeskOAuthConnector()->resolveBaseUrl())->toBe('https://codebar-zendesk.zendesk.com')
+            ->and(new ZendeskOAuthConnector('acme')->resolveBaseUrl())->toBe('https://acme.zendesk.com');
+    });
 });
 
-it('will throw an exception if an auth method is not set', closure: function () {
-    config([
-        'zendesk.auth.method' => null,
-    ]);
+describe('authentication method', function () {
+    it('defaults to oauth', function () {
+        expect(new ZendeskConnector()->authMethod())->toBe(AuthMethod::OAUTH);
+    });
 
-    $connector = new ZendeskConnector;
-    $connector->setAuth();
+    it('supports access tokens', function () {
+        config(['zendesk.auth.method' => 'access_token']);
 
-})->throws('No authentication method provided.', 500);
+        expect(new ZendeskConnector()->authMethod())->toBe(AuthMethod::ACCESS_TOKEN);
+    });
 
-it('will throw an exception if an auth method invalid', closure: function () {
-    config([
-        'zendesk.auth.method' => 'not-a-valid-method',
-    ]);
+    it('uses oauth when credentials are passed to the constructor', function () {
+        config(['zendesk.auth.method' => 'access_token']);
 
-    $connector = new ZendeskConnector;
-    $connector->setAuth();
+        $connector = new ZendeskConnector(credentials: new OAuthCredentials('client', 'secret'));
 
-})->throws('Invalid authentication method provided.', 500);
+        expect($connector->authMethod())->toBe(AuthMethod::OAUTH);
+    });
 
-it('will not throw an exception if an auth method valid', closure: function () {
-    config([
-        'zendesk.subdomain' => 'codebarsolutionsag',
-        'zendesk.auth.email_address' => 'test@example.com',
-        'zendesk.auth.api_token' => 'test-token',
-        'zendesk.auth.password' => 'test-password',
-    ]);
+    it('throws if no method is configured', function (?string $method) {
+        config(['zendesk.auth.method' => $method]);
 
-    config([
-        'zendesk.auth.method' => 'token',
-    ]);
+        new ZendeskConnector()->authMethod();
+    })->with([null, ''])->throws(ZendeskConfigurationException::class, 'No authentication method provided.');
 
-    $connector = new ZendeskConnector;
-    $connector->setAuth();
+    it('rejects the removed and unknown methods', function (string $method) {
+        config(['zendesk.auth.method' => $method]);
 
-    config([
-        'zendesk.auth.method' => 'basic',
-    ]);
-
-    $connector = new ZendeskConnector;
-    $connector->setAuth();
-
-})->expectNotToPerformAssertions();
-
-it('will throw an exception if a token is not provided when using the token method', closure: function () {
-    config([
-        'zendesk.subdomain' => 'codebarsolutionsag',
-        'zendesk.auth.method' => 'token',
-        'zendesk.auth.email_address' => 'test@example.com',
-        'zendesk.auth.api_token' => null,
-        'zendesk.auth.password' => null,
-    ]);
-
-    $connector = new ZendeskConnector;
-    $connector->setAuth();
-
-})->throws('No API token provided for token authentication.', 500);
-
-it('will not throw an exception if a token is provided when using the token method', closure: function () {
-    config([
-        'zendesk.subdomain' => 'codebarsolutionsag',
-        'zendesk.auth.method' => 'token',
-        'zendesk.auth.email_address' => 'test@example.com',
-        'zendesk.auth.api_token' => 'test-token',
-        'zendesk.auth.password' => null,
-    ]);
-
-    $connector = new ZendeskConnector;
-    $connector->setAuth();
-
-})->expectNotToPerformAssertions();
-
-it('will throw an exception if a password is not provided when using the basic method', closure: function () {
-    config([
-        'zendesk.subdomain' => 'codebarsolutionsag',
-        'zendesk.auth.method' => 'basic',
-        'zendesk.auth.email_address' => 'test@example.com',
-        'zendesk.auth.api_token' => null,
-        'zendesk.auth.password' => null,
-    ]);
-
-    $connector = new ZendeskConnector;
-    $connector->setAuth();
-
-})->throws('No password provided for basic authentication.', 500);
-
-it('will not throw an exception if a password is provided when using the password method', closure: function () {
-    config([
-        'zendesk.subdomain' => 'codebarsolutionsag',
-        'zendesk.auth.method' => 'basic',
-        'zendesk.auth.email_address' => 'test@example.com',
-        'zendesk.auth.api_token' => null,
-        'zendesk.auth.password' => 'test-password',
-    ]);
-
-    $connector = new ZendeskConnector;
-    $connector->setAuth();
-
-})->expectNotToPerformAssertions();
-
-it('will compile the correct authentication string for token method', function () {
-    config([
-        'zendesk.subdomain' => 'codebarsolutionsag',
-        'zendesk.auth.method' => 'token',
-        'zendesk.auth.email_address' => 'test@example.com',
-        'zendesk.auth.api_token' => 'test-token',
-        'zendesk.auth.password' => null,
-    ]);
-
-    $connector = new ZendeskConnector;
-
-    $token = $connector->setAuth();
-
-    expect($token)->toBe('test@example.com/token:test-token');
+        new ZendeskConnector()->authMethod();
+    })->with(['token', 'basic', 'nope'])->throws(
+        ZendeskConfigurationException::class,
+        'Supported methods: oauth, access_token.',
+    );
 });
 
-it('will compile the correct authentication string for basic method', function () {
-    config([
-        'zendesk.subdomain' => 'codebarsolutionsag',
-        'zendesk.auth.method' => 'basic',
-        'zendesk.auth.email_address' => 'test@example.com',
-        'zendesk.auth.api_token' => null,
-        'zendesk.auth.password' => 'test-password',
-    ]);
+describe('oauth', function () {
+    it('sends requests with an oauth bearer token', function () {
+        $mockClient = fakeZendesk([
+            CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+        ]);
 
-    $connector = new ZendeskConnector;
+        new ZendeskConnector()->send(new CountTicketsRequest);
 
-    $token = $connector->setAuth();
+        $mockClient->assertSentCount(1, CreateAccessTokenRequest::class);
+        expect($mockClient->getLastPendingRequest()->headers()->get('Authorization'))->toBe('Bearer test-access-token');
+    });
 
-    expect($token)->toBe('test@example.com:test-password');
+    it('reuses the cached token across connectors', function () {
+        $mockClient = fakeZendesk([
+            CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+        ]);
+
+        new ZendeskConnector()->send(new CountTicketsRequest);
+        new ZendeskConnector()->send(new CountTicketsRequest);
+
+        $mockClient->assertSentCount(1, CreateAccessTokenRequest::class);
+        $mockClient->assertSentCount(2, CountTicketsRequest::class);
+    });
+
+    it('uses the credentials and subdomain passed to the constructor', function () {
+        $mockClient = fakeZendesk([
+            CreateAccessTokenRequest::class => fn (PendingRequest $request) => tokenResponse([
+                'access_token' => $request->body()->all()['client_id'].'@'.parse_url($request->getUrl(), PHP_URL_HOST),
+            ]),
+            CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+        ]);
+
+        new ZendeskConnector('acme', new OAuthCredentials('acme-client', 'acme-secret'))->send(new CountTicketsRequest);
+
+        $pendingRequest = $mockClient->getLastPendingRequest();
+
+        expect($pendingRequest->getUrl())->toBe('https://acme.zendesk.com/api/v2/tickets/count.json')
+            ->and($pendingRequest->headers()->get('Authorization'))->toBe('Bearer acme-client@acme.zendesk.com');
+    });
+
+    it('throws a configuration exception for missing credentials before sending anything', function () {
+        config(['zendesk.auth.oauth.client_secret' => null]);
+        $mockClient = fakeZendesk();
+
+        expect(fn () => new ZendeskConnector()->send(new CountTicketsRequest))
+            ->toThrow(ZendeskConfigurationException::class, 'No OAuth client secret provided.');
+
+        $mockClient->assertNothingSent();
+    });
+
+    it('throws an authentication exception when no token can be obtained', function () {
+        $mockClient = fakeZendesk([
+            CreateAccessTokenRequest::class => MockResponse::make(['error' => 'invalid_client'], 401),
+        ]);
+
+        expect(fn () => new ZendeskConnector()->send(new CountTicketsRequest))
+            ->toThrow(ZendeskAuthenticationException::class);
+
+        $mockClient->assertNotSent(CountTicketsRequest::class);
+    });
+
+    it('retries once with a fresh token when the cached token is rejected', function () {
+        $tokens = 0;
+        $requests = 0;
+
+        $mockClient = fakeZendesk([
+            CreateAccessTokenRequest::class => function () use (&$tokens) {
+                return tokenResponse(['access_token' => 'token-'.++$tokens]);
+            },
+            CountTicketsRequest::class => function (PendingRequest $request) use (&$requests) {
+                $requests++;
+
+                return $request->headers()->get('Authorization') === 'Bearer token-2'
+                    ? MockResponse::fixture('count-tickets-request')
+                    : MockResponse::make(['error' => 'invalid_token'], 401);
+            },
+        ]);
+
+        $response = new ZendeskConnector()->send(new CountTicketsRequest);
+
+        expect($response->status())->toBe(200)
+            ->and($tokens)->toBe(2)
+            ->and($requests)->toBe(2)
+            ->and($response->dto()->value)->toBe(4);
+    });
+
+    it('returns the 401 response if the fresh token is rejected as well', function () {
+        $mockClient = fakeZendesk([
+            CountTicketsRequest::class => MockResponse::make(['error' => 'invalid_token'], 401),
+        ]);
+
+        $response = new ZendeskConnector()->send(new CountTicketsRequest);
+
+        expect($response->status())->toBe(401);
+        $mockClient->assertSentCount(2, CreateAccessTokenRequest::class);
+        $mockClient->assertSentCount(2, CountTicketsRequest::class);
+    });
+
+    it('does not retry other failed responses', function (int $status) {
+        $mockClient = fakeZendesk([
+            CountTicketsRequest::class => MockResponse::make([], $status),
+        ]);
+
+        expect(new ZendeskConnector()->send(new CountTicketsRequest)->status())->toBe($status);
+        $mockClient->assertSentCount(1, CountTicketsRequest::class);
+    })->with([403, 404, 422, 429, 500]);
 });
 
-it('will throw and authentication error when details are incorrect', function () {
-    config([
-        'zendesk.subdomain' => 'codebarsolutionsagwrong',
-        'zendesk.auth.method' => 'basic',
-        'zendesk.auth.email_address' => 'tessdft@example.com',
-        'zendesk.auth.api_token' => null,
-        'zendesk.auth.password' => 'test-passwordsdfsf',
-    ]);
+describe('access token', function () {
+    beforeEach(function () {
+        config([
+            'zendesk.auth.method' => 'access_token',
+            'zendesk.auth.access_token' => 'my-access-token',
+        ]);
+    });
 
-    $mockClient = new MockClient([
+    it('sends requests with the configured bearer token', function () {
+        $mockClient = fakeZendesk([
+            CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+        ]);
+
+        new ZendeskConnector()->send(new CountTicketsRequest);
+
+        $mockClient->assertNotSent(CreateAccessTokenRequest::class);
+        expect($mockClient->getLastPendingRequest()->headers()->get('Authorization'))->toBe('Bearer my-access-token');
+    });
+
+    it('does not retry on 401', function () {
+        $mockClient = fakeZendesk([
+            CountTicketsRequest::class => MockResponse::make([], 401),
+        ]);
+
+        expect(new ZendeskConnector()->send(new CountTicketsRequest)->status())->toBe(401);
+        $mockClient->assertSentCount(1, CountTicketsRequest::class);
+    });
+
+    it('throws if no access token is configured', function (?string $token) {
+        config(['zendesk.auth.access_token' => $token]);
+        fakeZendesk();
+
+        new ZendeskConnector()->send(new CountTicketsRequest);
+    })->with([null, ''])->throws(ZendeskConfigurationException::class, 'No access token provided');
+});
+
+describe('custom authenticator', function () {
+    it('prefers an authenticator set at runtime and skips oauth', function () {
+        $mockClient = fakeZendesk([
+            CountTicketsRequest::class => MockResponse::make([], 401),
+        ]);
+
+        $connector = new ZendeskConnector;
+        $connector->authenticate(new TokenAuthenticator('user-token'));
+
+        $response = $connector->send(new CountTicketsRequest);
+
+        expect($response->status())->toBe(401)
+            ->and($mockClient->getLastPendingRequest()->headers()->get('Authorization'))->toBe('Bearer user-token');
+        $mockClient->assertNotSent(CreateAccessTokenRequest::class);
+        $mockClient->assertSentCount(1, CountTicketsRequest::class);
+    });
+});
+
+describe('headers', function () {
+    it('accepts json and does not force a content type on requests without a body', function () {
+        $mockClient = fakeZendesk([
+            CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+        ]);
+
+        new ZendeskConnector()->send(new CountTicketsRequest);
+
+        $headers = $mockClient->getLastPendingRequest()->headers();
+
+        expect($headers->get('Accept'))->toBe('application/json')
+            ->and($headers->get('Content-Type'))->toBeNull();
+    });
+});
+
+it('returns failed responses and throws when creating a dto from them', function () {
+    fakeZendesk([
         SingleTicketRequest::class => MockResponse::fixture('details-incorrect-request'),
     ]);
 
-    $connector = new ZendeskConnector;
-    $connector->withMockClient($mockClient);
+    $response = new ZendeskConnector()->send(new SingleTicketRequest(81));
 
-    $response = $connector->send(new SingleTicketRequest(81));
-
-    $mockClient->assertSent(SingleTicketRequest::class);
-
-    expect($response->status())->toBe(404);
+    expect($response->status())->toBe(404)
+        ->and(fn () => $response->dto())->toThrow(NotFoundException::class);
 });
