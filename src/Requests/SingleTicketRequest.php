@@ -3,7 +3,6 @@
 namespace CodebarAg\Zendesk\Requests;
 
 use CodebarAg\Zendesk\Dto\Tickets\SingleTicketDTO;
-use Exception;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
@@ -12,23 +11,18 @@ class SingleTicketRequest extends Request
 {
     protected Method $method = Method::GET;
 
-    protected int $ticketId;
-
-    public function __construct(int $ticketId)
-    {
-        $this->ticketId = $ticketId;
-    }
+    public function __construct(
+        protected readonly int $ticketId,
+    ) {}
 
     public function resolveEndpoint(): string
     {
         return '/tickets/'.$this->ticketId.'.json';
     }
 
-    public function createDtoFromResponse(Response $response): mixed
+    public function createDtoFromResponse(Response $response): SingleTicketDTO
     {
-        if (! $response->successful()) {
-            throw new Exception('Request was not successful. Unable to create DTO.');
-        }
+        $response->throw();
 
         return SingleTicketDTO::fromResponse($response);
     }

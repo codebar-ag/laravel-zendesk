@@ -3,20 +3,17 @@
 use CodebarAg\Zendesk\Requests\CountTicketsRequest;
 use CodebarAg\Zendesk\ZendeskConnector;
 use Saloon\Http\Faking\MockResponse;
-use Saloon\Laravel\Http\Faking\MockClient;
 
-it('can count all tickets', closure: function () {
-    $mockClient = new MockClient([
-        CountTicketsRequest::class => MockResponse::fixture('count-tickets-request'),
+it('counts tickets', function () {
+    $mockClient = fakeZendesk([
+        CountTicketsRequest::class => MockResponse::make([
+            'count' => ['value' => 4, 'refreshed_at' => '2026-10-23T12:00:00+00:00'],
+        ]),
     ]);
 
-    $connector = new ZendeskConnector;
-    $connector->withMockClient($mockClient);
+    $dto = new ZendeskConnector()->send(new CountTicketsRequest)->dto();
 
-    $response = $connector->send(new CountTicketsRequest);
-
-    $mockClient->assertSent(CountTicketsRequest::class);
-
-    expect($response->dto()->value)->toBe(4)
-        ->and($response->dto()->refreshed_at->toDateTimeString())->toBe('2023-09-20 22:08:07');
+    expect($mockClient->getLastPendingRequest()->getUrl())->toBe('https://codebar-zendesk.zendesk.com/api/v2/tickets/count.json')
+        ->and($dto->value)->toBe(4)
+        ->and($dto->refreshed_at->toDateTimeString())->toBe('2026-10-23 12:00:00');
 });

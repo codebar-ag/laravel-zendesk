@@ -2,6 +2,7 @@
 
 namespace CodebarAg\Zendesk\Dto\Tickets\Attachments;
 
+use CodebarAg\Zendesk\Dto\Concerns\ParsesDates;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Saloon\Http\Response;
@@ -9,46 +10,46 @@ use Spatie\LaravelData\Data;
 
 class UploadDTO extends Data
 {
+    use ParsesDates;
+
+    /**
+     * @param  array<int, AttachmentDTO>  $attachments
+     */
     public function __construct(
         public string $token,
-        public Carbon $expires_at,
+        public ?Carbon $expires_at,
         public array $attachments,
-        public AttachmentDTO $attachment,
+        public ?AttachmentDTO $attachment,
     ) {}
 
     public static function fromResponse(Response $response): self
     {
-        $data = Arr::get($response->json(), 'upload');
-
-        return self::fromArray($data);
+        return self::fromArray((array) $response->json('upload'));
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): self
     {
-        $attachments = Arr::get($data, 'attachments');
-
-        if ($attachments) {
-            foreach ($attachments as $key => $attachment) {
-                $attachments[$key] = self::getAttachment($attachment);
-            }
-        }
+        $attachment = Arr::get($data, 'attachment');
 
         return new self(
-            token: Arr::get($data, 'token'),
-            expires_at: Carbon::parse(Arr::get($data, 'expires_at')),
-            attachments: $attachments,
-            attachment: self::getAttachment(Arr::get($data, 'attachment')),
+            token: (string) Arr::get($data, 'token'),
+            expires_at: self::parseDate(Arr::get($data, 'expires_at')),
+            attachments: array_map(
+                fn (array|AttachmentDTO $attachment): AttachmentDTO => self::attachment($attachment),
+                array_values((array) Arr::get($data, 'attachments', [])),
+            ),
+            attachment: $attachment === null ? null : self::attachment($attachment),
         );
     }
 
-    private static function getAttachment(null|array|AttachmentDTO $data): AttachmentDTO
+    /**
+     * @param  array<string, mixed>|AttachmentDTO  $attachment
+     */
+    private static function attachment(array|AttachmentDTO $attachment): AttachmentDTO
     {
-        $attachment = $data ?? null;
-
-        if (! $attachment instanceof AttachmentDTO) {
-            $attachment = AttachmentDTO::fromArray($attachment);
-        }
-
-        return $attachment;
+        return $attachment instanceof AttachmentDTO ? $attachment : AttachmentDTO::fromArray($attachment);
     }
 }

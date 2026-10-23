@@ -3,7 +3,7 @@
 namespace CodebarAg\Zendesk\Requests;
 
 use CodebarAg\Zendesk\Dto\Tickets\Attachments\UploadDTO;
-use Exception;
+use Psr\Http\Message\StreamInterface;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -16,16 +16,29 @@ class CreateAttachmentRequest extends Request implements HasBody
 
     protected Method $method = Method::POST;
 
+    /**
+     * @param  resource|StreamInterface  $stream
+     * @param  string|null  $token  Upload token of a previous upload to add this file to the same upload
+     */
+    public function __construct(
+        protected readonly string $fileName,
+        protected readonly string $mimeType,
+        protected readonly mixed $stream,
+        protected readonly ?string $token = null,
+    ) {}
+
     public function resolveEndpoint(): string
     {
-        return '/uploads.json?filename='.$this->fileName;
+        return '/uploads.json';
     }
 
-    public function __construct(
-        protected string $fileName,
-        protected string $mimeType,
-        protected mixed $stream,
-    ) {}
+    protected function defaultQuery(): array
+    {
+        return array_filter([
+            'filename' => $this->fileName,
+            'token' => $this->token,
+        ], fn (?string $value): bool => $value !== null);
+    }
 
     protected function defaultHeaders(): array
     {
@@ -40,11 +53,9 @@ class CreateAttachmentRequest extends Request implements HasBody
         return $this->stream;
     }
 
-    public function createDtoFromResponse(Response $response): mixed
+    public function createDtoFromResponse(Response $response): UploadDTO
     {
-        if (! $response->successful()) {
-            throw new Exception('Request was not successful. Unable to create DTO.');
-        }
+        $response->throw();
 
         return UploadDTO::fromResponse($response);
     }

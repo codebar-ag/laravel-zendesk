@@ -1,0 +1,27 @@
+{
+    "statusCode": 201,
+    "headers": {
+        "Date": [
+            "Fri, 23 Oct 2026 12:00:00 GMT"
+        ],
+        "Content-Type": [
+            "application/json; charset=utf-8"
+        ],
+        "x-zendesk-api-version": [
+            "v2"
+        ],
+        "x-rate-limit": [
+            "700"
+        ],
+        "x-rate-limit-remaining": [
+            "699"
+        ],
+        "Set-Cookie": "REDACTED",
+        "x-request-id": "REDACTED"
+    },
+    "data": "{\"upload\": {\"token\": \"synthetic-upload-token\", \"expires_at\": \"2026-10-26T12:00:00Z\", \"attachments\": [{\"url\": \"https://codebar-zendesk.zendesk.com/api/v2/attachments/900000000100.json\", \"id\": 900000000100, \"file_name\": \"test.png\", \"content_url\": \"https://codebar-zendesk.zendesk.com/attachments/token/synthetic900000000100/?name=test.png\", \"mapped_content_url\": \"https://codebar-zendesk.zendesk.com/attachments/token/synthetic900000000100/?name=test.png\", \"content_type\": \"image/png\", \"size\": 26271, \"width\": 640, \"height\": 360, \"inline\": false, \"deleted\": false, \"malware_access_override\": false, \"malware_scan_result\": \"malware_not_found\", \"thumbnails\": [{\"url\": \"https://codebar-zendesk.zendesk.com/api/v2/attachments/900000000101.json\", \"id\": 900000000101, \"file_name\": \"test_thumb.png\", \"content_url\": \"https://codebar-zendesk.zendesk.com/attachments/token/synthetic900000000101/?name=test_thumb.png\", \"mapped_content_url\": \"https://codebar-zendesk.zendesk.com/attachments/token/synthetic900000000101/?name=test_thumb.png\", \"content_type\": \"image/png\", \"size\": 4321, \"width\": 80, \"height\": 45, \"inline\": false, \"deleted\": false, \"malware_access_override\": false, \"malware_scan_result\": \"malware_not_found\", \"thumbnails\": []}]}], \"attachment\": {\"url\": \"https://codebar-zendesk.zendesk.com/api/v2/attachments/900000000100.json\", \"id\": 900000000100, \"file_name\": \"test.png\", \"content_url\": \"https://codebar-zendesk.zendesk.com/attachments/token/synthetic900000000100/?name=test.png\", \"mapped_content_url\": \"https://codebar-zendesk.zendesk.com/attachments/token/synthetic900000000100/?name=test.png\", \"content_type\": \"image/png\", \"size\": 26271, \"width\": 640, \"height\": 360, \"inline\": false, \"deleted\": false, \"malware_access_override\": false, \"malware_scan_result\": \"malware_not_found\", \"thumbnails\": [{\"url\": \"https://codebar-zendesk.zendesk.com/api/v2/attachments/900000000101.json\", \"id\": 900000000101, \"file_name\": \"test_thumb.png\", \"content_url\": \"https://codebar-zendesk.zendesk.com/attachments/token/synthetic900000000101/?name=test_thumb.png\", \"mapped_content_url\": \"https://codebar-zendesk.zendesk.com/attachments/token/synthetic900000000101/?name=test_thumb.png\", \"content_type\": \"image/png\", \"size\": 4321, \"width\": 80, \"height\": 45, \"inline\": false, \"deleted\": false, \"malware_access_override\": false, \"malware_scan_result\": \"malware_not_found\", \"thumbnails\": []}]}}}",
+    "context": {
+        "synthetic": true,
+        "note": "Hand-written placeholder based on the Zendesk API reference. Replace with `composer test:record`."
+    }
+}
