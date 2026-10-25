@@ -53,10 +53,6 @@ class ZendeskConnector extends Connector
             throw new \Exception('No password provided for basic authentication.', 500);
         }
 
-        if (config('zendesk.auth.method') === 'basic' && ! config('zendesk.auth.password')) {
-            throw new \Exception('No password provided for basic authentication.', 500);
-        }
-
         if (config('zendesk.auth.method') === 'token' && ! config('zendesk.auth.api_token')) {
             throw new \Exception('No API token provided for token authentication.', 500);
         }
