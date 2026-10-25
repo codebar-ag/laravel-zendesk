@@ -31,3 +31,45 @@ it('can create an attachment', closure: function () {
         ->and($response->dto()->attachment->height)->toBe('360')
         ->and($response->dto()->attachment->content_url)->toBe('https://codebarsolutions.zendesk.com/attachments/token/K32w31jO8UBB37UpKk2i1o4wg/?name=test.png');
 });
+
+it('encodes the file name in the upload endpoint', function () {
+    $request = new CreateAttachmentRequest(
+        fileName: 'my report&token=abc#1.pdf',
+        mimeType: 'application/pdf',
+        stream: fopen('php://memory', 'r'),
+    );
+
+    expect($request->resolveEndpoint())
+        ->toBe('/uploads.json?filename=my%20report%26token%3Dabc%231.pdf');
+});
+
+it('keeps plain file names unchanged in the upload endpoint', function () {
+    $request = new CreateAttachmentRequest(
+        fileName: 'test.png',
+        mimeType: 'image/png',
+        stream: fopen('php://memory', 'r'),
+    );
+
+    expect($request->resolveEndpoint())->toBe('/uploads.json?filename=test.png');
+});
+
+it('sends the encoded file name as a single query parameter', function () {
+    $mockClient = new MockClient([
+        CreateAttachmentRequest::class => MockResponse::fixture('create-attachment-request'),
+    ]);
+
+    $connector = new ZendeskConnector;
+    $connector->withMockClient($mockClient);
+
+    $connector->send(new CreateAttachmentRequest(
+        fileName: 'a&b=c.png',
+        mimeType: 'image/png',
+        stream: fopen('php://memory', 'r'),
+    ));
+
+    $mockClient->assertSent(function ($request, $response) {
+        parse_str((string) $response->getPsrRequest()->getUri()->getQuery(), $query);
+
+        return $query === ['filename' => 'a&b=c.png'];
+    });
+});
