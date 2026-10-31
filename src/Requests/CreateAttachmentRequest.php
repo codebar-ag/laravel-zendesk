@@ -18,7 +18,7 @@ class CreateAttachmentRequest extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return '/uploads.json?filename='.$this->fileName;
+        return '/uploads.json?filename='.rawurlencode($this->fileName);
     }
 
     public function __construct(

@@ -35,6 +35,34 @@ it('will return the base path', closure: function () {
 
 });
 
+it('will throw an exception if the subdomain is not a single host label', function (string $subdomain) {
+    config([
+        'zendesk.subdomain' => $subdomain,
+    ]);
+
+    $connector = new ZendeskConnector;
+    $connector->resolveBaseUrl();
+})->with([
+    'path' => ['evil.example.com/'],
+    'query' => ['evil.example.com?'],
+    'fragment' => ['evil.example.com#'],
+    'userinfo' => ['user@evil.example.com'],
+    'dot' => ['codebar.evil'],
+    'port' => ['codebar:8080'],
+    'leading hyphen' => ['-codebar'],
+    'whitespace' => ['codebar '],
+    'trailing newline' => ["codebar\n"],
+])->throws('Invalid subdomain provided.', 500);
+
+it('accepts subdomains containing hyphens and digits', function () {
+    config([
+        'zendesk.subdomain' => 'codebar-solutions-2',
+    ]);
+
+    expect((new ZendeskConnector)->resolveBaseUrl())
+        ->toBe('https://codebar-solutions-2.zendesk.com/api/v2');
+});
+
 it('will throw an exception if an auth method is not set', closure: function () {
     config([
         'zendesk.auth.method' => null,

@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6.1.0
+      - uses: actions/checkout@v7.0.1
 
       - name: Setup PHP
         uses: shivammathur/setup-php@2.40.0
@@ -35,8 +35,8 @@ jobs:
           php-version: '8.5'
           coverage: none
 
-      - name: Install Composer dependencies
-        run: composer update --no-interaction --prefer-dist --no-ansi
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@4.0.0
 
       - name: Run PHPStan
         run: ./vendor/bin/phpstan --error-format=github

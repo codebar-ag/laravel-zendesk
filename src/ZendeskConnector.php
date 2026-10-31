@@ -14,6 +14,13 @@ class ZendeskConnector extends Connector
             throw new \Exception('No subdomain provided.', 500);
         }
 
+        // Only allow a single DNS label so the configured value cannot
+        // redirect requests (and credentials) to another host.
+        if (! is_string(config('zendesk.subdomain'))
+            || ! preg_match('/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\z/i', config('zendesk.subdomain'))) {
+            throw new \Exception('Invalid subdomain provided.', 500);
+        }
+
         return 'https://'.config('zendesk.subdomain').'.zendesk.com/api/v2';
     }
 
@@ -40,10 +47,6 @@ class ZendeskConnector extends Connector
 
         if (! config('zendesk.auth.email_address')) {
             throw new \Exception('No email address provided.', 500);
-        }
-
-        if (config('zendesk.auth.method') === 'basic' && ! config('zendesk.auth.password')) {
-            throw new \Exception('No password provided for basic authentication.', 500);
         }
 
         if (config('zendesk.auth.method') === 'basic' && ! config('zendesk.auth.password')) {
